@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Search, MapPin, Sparkles, Star } from "lucide-react";
 import WeatherDisplay from "./components/WeatherDisplay";
 import CityVisualization from "./components/CityVisualization";
@@ -91,6 +91,20 @@ function App() {
             <div className="relative min-h-screen overflow-hidden bg-slate-50">
                 <div className="relative max-w-6xl mx-auto px-4 py-12 lg:py-14 space-y-10">
                     <div className="glass-panel relative z-20 p-8 md:p-10 overflow-visible border-slate-200/60">
+                        <a
+                            href="https://github.com/AswinAsok/nano-weather-app"
+                            className="pill flex items-center gap-2 hover:border-slate-400/80 hover:text-slate-900 transition absolute right-6 top-6 md:right-8 md:top-8 z-10"
+                            target="_blank"
+                            rel="noreferrer"
+                            title="View on GitHub"
+                        >
+                            <Star className="w-4 h-4 text-slate-800" />
+                            {githubStars !== null && !githubStarsError && `${githubStars} stars`}
+                            {githubStars === null &&
+                                !githubStarsError &&
+                                "APIs cost snacks—toss a star if this made you smile"}
+                            {githubStarsError && "GitHub unavailable"}
+                        </a>
                         <div className="relative grid grid-cols-1 gap-8 items-center">
                             <div className="space-y-4">
                                 <div className="flex flex-wrap items-center gap-2">
@@ -98,22 +112,6 @@ function App() {
                                         <Sparkles className="w-4 h-4" />
                                         Live weather, instant visuals
                                     </div>
-                                    <a
-                                        href="https://github.com/AswinAsok/nano-weather-app"
-                                        className="pill flex items-center gap-2 hover:border-slate-400/80 hover:text-slate-900 transition"
-                                        target="_blank"
-                                        rel="noreferrer"
-                                        title="View on GitHub"
-                                    >
-                                        <Star className="w-4 h-4 text-slate-800" />
-                                        {githubStars !== null &&
-                                            !githubStarsError &&
-                                            `${githubStars} stars`}
-                                        {githubStars === null &&
-                                            !githubStarsError &&
-                                            "APIs cost snacks—toss a star if this made you smile"}
-                                        {githubStarsError && "GitHub unavailable"}
-                                    </a>
                                 </div>
                                 <h1 className="text-4xl md:text-5xl font-semibold leading-tight text-slate-900">
                                     Search a city. See it now.
