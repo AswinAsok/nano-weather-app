@@ -1,8 +1,5 @@
 import type { WeatherData } from '../types/weather';
 
-const IMAGE_API_KEY = import.meta.env.VITE_NANO_BANANA_API_KEY || '';
-const IMAGE_API_URL = import.meta.env.VITE_NANO_BANANA_API_URL || 'https://api.nanobanana.ai/generate';
-
 function getTimeOfDay(timezone: number): string {
   const now = new Date();
   const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
@@ -102,23 +99,20 @@ Square 1080x1080 dimension.`;
 export async function generateCityImage(weather: WeatherData): Promise<string> {
   const prompt = buildPrompt(weather);
 
-  const response = await fetch(IMAGE_API_URL, {
+  const res = await fetch('/api/generate-image', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${IMAGE_API_KEY}`,
-    },
-    body: JSON.stringify({
-      prompt,
-      width: 1080,
-      height: 1080,
-    }),
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ prompt }),
   });
 
-  if (!response.ok) {
-    throw new Error('Failed to generate image');
+  if (!res.ok) {
+    const message = await res.text();
+    throw new Error(message || 'Image generation failed');
   }
 
-  const data = await response.json();
-  return data.imageUrl || data.url || data.image;
+  const data = (await res.json()) as { dataUrl?: string; error?: string };
+  if (data.error) throw new Error(data.error);
+  if (!data.dataUrl) throw new Error('No image returned from server');
+
+  return data.dataUrl;
 }

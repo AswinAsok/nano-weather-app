@@ -1,4 +1,4 @@
-import { Thermometer, Droplets, Wind, Eye, Gauge } from 'lucide-react';
+import { Thermometer, Droplets, Wind, Eye, Gauge, Clock3, MapPin } from 'lucide-react';
 import type { WeatherData } from '../types/weather';
 
 interface WeatherDisplayProps {
@@ -6,6 +6,9 @@ interface WeatherDisplayProps {
 }
 
 export default function WeatherDisplay({ weather }: WeatherDisplayProps) {
+  const utcNow = Date.now() + new Date().getTimezoneOffset() * 60000;
+  const localTime = new Date(utcNow + weather.timezone * 1000);
+
   const getWeatherEmoji = (icon: string) => {
     const iconMap: Record<string, string> = {
       '01d': '☀️', '01n': '🌙',
@@ -22,77 +25,100 @@ export default function WeatherDisplay({ weather }: WeatherDisplayProps) {
   };
 
   return (
-    <div className="bg-white rounded-3xl shadow-2xl p-8">
-      <div className="flex items-start justify-between mb-8">
-        <div>
-          <h2 className="text-4xl font-bold text-gray-800 mb-2">
-            {weather.city}, {weather.country}
-          </h2>
-          <p className="text-gray-600 capitalize text-lg">
-            {weather.description}
-          </p>
-        </div>
-        <div className="text-7xl">
-          {getWeatherEmoji(weather.icon)}
-        </div>
-      </div>
+    <div className="glass-panel relative overflow-hidden p-8 md:p-10 border-blue-500/10">
+      <div className="absolute inset-0 bg-gradient-to-br from-white/40 via-white/0 to-white/40" />
+      <div className="absolute -right-16 top-10 h-48 w-48 rounded-full bg-emerald-300/25 blur-3xl" />
+      <div className="absolute -left-10 bottom-0 h-56 w-56 rounded-full bg-blue-300/20 blur-3xl" />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <div className="bg-gradient-to-br from-orange-50 to-red-50 rounded-2xl p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-gray-600 mb-1">Temperature</p>
-              <p className="text-5xl font-bold text-gray-800">
+      <div className="relative space-y-8">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+          <div className="space-y-3">
+            <div className="pill w-fit">
+              <MapPin className="w-4 h-4" />
+              {weather.city}, {weather.country}
+            </div>
+            <h2 className="text-3xl md:text-4xl font-semibold text-slate-900">
+              {weather.city}
+            </h2>
+            <div className="flex items-center gap-3 text-slate-600">
+              <Clock3 className="w-4 h-4" />
+              <span className="text-sm">
+                Local time {localTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+              </span>
+              <span className="text-xs rounded-full bg-white/70 px-3 py-1 border border-blue-500/10 text-slate-700">
+                {weather.description}
+              </span>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-5 rounded-2xl border border-blue-500/15 bg-white/85 px-6 py-5 shadow-glow">
+            <div className="text-6xl">
+              {getWeatherEmoji(weather.icon)}
+            </div>
+            <div className="space-y-1 text-right">
+              <p className="text-4xl md:text-5xl font-semibold text-slate-900">
                 {weather.temperature}°C
               </p>
-              <p className="text-gray-500 mt-2">
-                Feels like {weather.feelsLike}°C
-              </p>
+              <p className="text-slate-600">Feels like {weather.feelsLike}°C</p>
+              <p className="text-xs text-emerald-600">Updated just now</p>
             </div>
-            <Thermometer className="w-12 h-12 text-red-400" />
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
-          <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-2xl p-4">
-            <div className="flex items-center gap-2 mb-2">
-              <Droplets className="w-5 h-5 text-blue-400" />
-              <p className="text-gray-600 text-sm">Humidity</p>
+        <div className="glass-card border-blue-500/10 p-5 sm:p-6 grid sm:grid-cols-3 gap-4 items-center">
+          <div className="flex items-center gap-3 sm:col-span-2">
+            <Thermometer className="w-10 h-10 text-emerald-600" />
+            <div>
+              <p className="text-sm text-slate-600">Thermal comfort</p>
+              <p className="text-lg text-slate-900 font-semibold">{weather.description}</p>
+              <p className="text-sm text-slate-600">Calibrated to local daylight and humidity.</p>
             </div>
-            <p className="text-2xl font-bold text-gray-800">
-              {weather.humidity}%
-            </p>
           </div>
+          <div className="flex flex-wrap gap-2 justify-end text-xs">
+            <span className="px-3 py-2 rounded-full bg-emerald-500/10 border border-emerald-400/30 text-emerald-700">Air</span>
+            <span className="px-3 py-2 rounded-full bg-blue-500/10 border border-blue-400/30 text-blue-700">Visibility</span>
+            <span className="px-3 py-2 rounded-full bg-cyan-500/10 border border-cyan-400/30 text-cyan-700">Pressure</span>
+          </div>
+        </div>
 
-          <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl p-4">
-            <div className="flex items-center gap-2 mb-2">
-              <Wind className="w-5 h-5 text-green-400" />
-              <p className="text-gray-600 text-sm">Wind</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+          {[{
+            label: 'Humidity',
+            value: `${weather.humidity}%`,
+            helper: 'Ambient moisture right now.',
+            icon: Droplets,
+            accent: 'from-cyan-400/25 to-transparent',
+          }, {
+            label: 'Wind',
+            value: `${weather.windSpeed} m/s`,
+            helper: 'Surface wind speed recorded.',
+            icon: Wind,
+            accent: 'from-emerald-400/25 to-transparent',
+          }, {
+            label: 'Pressure',
+            value: `${weather.pressure} hPa`,
+            helper: 'Sea-level adjusted pressure.',
+            icon: Gauge,
+            accent: 'from-indigo-400/20 to-transparent',
+          }, {
+            label: 'Visibility',
+            value: `${weather.visibility} km`,
+            helper: 'Line of sight in kilometers.',
+            icon: Eye,
+            accent: 'from-amber-400/20 to-transparent',
+          }].map((metric) => (
+            <div key={metric.label} className="glass-card relative overflow-hidden p-4 border-blue-500/10">
+              <div className={`absolute inset-0 bg-gradient-to-br ${metric.accent} opacity-70`} />
+              <div className="relative flex items-start justify-between gap-4">
+                <div className="space-y-1">
+                  <p className="text-xs uppercase tracking-wide text-slate-600">{metric.label}</p>
+                  <p className="text-2xl font-semibold text-slate-900">{metric.value}</p>
+                  <p className="text-sm text-slate-600">{metric.helper}</p>
+                </div>
+                <metric.icon className="w-6 h-6 text-slate-600" />
+              </div>
             </div>
-            <p className="text-2xl font-bold text-gray-800">
-              {weather.windSpeed} m/s
-            </p>
-          </div>
-
-          <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-4">
-            <div className="flex items-center gap-2 mb-2">
-              <Gauge className="w-5 h-5 text-purple-400" />
-              <p className="text-gray-600 text-sm">Pressure</p>
-            </div>
-            <p className="text-2xl font-bold text-gray-800">
-              {weather.pressure} hPa
-            </p>
-          </div>
-
-          <div className="bg-gradient-to-br from-yellow-50 to-orange-50 rounded-2xl p-4">
-            <div className="flex items-center gap-2 mb-2">
-              <Eye className="w-5 h-5 text-yellow-600" />
-              <p className="text-gray-600 text-sm">Visibility</p>
-            </div>
-            <p className="text-2xl font-bold text-gray-800">
-              {weather.visibility} km
-            </p>
-          </div>
+          ))}
         </div>
       </div>
     </div>
