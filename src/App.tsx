@@ -87,47 +87,30 @@ function App() {
     return (
         <div className="relative min-h-screen overflow-hidden bg-slate-50">
             <div className="relative max-w-6xl mx-auto px-4 py-12 lg:py-14 space-y-10">
-                <header className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                    <div className="flex items-center gap-3">
-                        <div className="h-12 w-12 glass-card flex items-center justify-center text-slate-800 border-slate-200">
-                            <Sparkles className="w-6 h-6" strokeWidth={1.5} />
-                        </div>
-                        <div>
-                            <p className="text-sm text-slate-500">Nano Weather Studio</p>
-                            <p className="text-lg font-semibold text-slate-900">
-                                Clarity for every city
-                            </p>
-                        </div>
-                    </div>
-                    <nav
-                        className="flex flex-wrap items-center gap-2 sm:gap-3"
-                        aria-label="Navigation"
-                    >
-                        <span className="pill">Live weather feed</span>
-                        <span className="pill">Generative cityscapes</span>
-                        <a
-                            href="https://github.com/AswinAsok/nano-weather-app"
-                            className="pill flex items-center gap-2 hover:border-slate-400/80 hover:text-slate-900 transition"
-                            target="_blank"
-                            rel="noreferrer"
-                            title="View on GitHub"
-                        >
-                            <Star className="w-4 h-4 text-slate-800" />
-                            {githubStars !== null && !githubStarsError && `${githubStars} stars`}
-                            {githubStars === null &&
-                                !githubStarsError &&
-                                "APIs cost snacks—toss a star if this made you smile"}
-                            {githubStarsError && "GitHub unavailable"}
-                        </a>
-                    </nav>
-                </header>
-
                 <div className="glass-panel relative z-20 p-8 md:p-10 overflow-visible border-slate-200/60">
                     <div className="relative grid grid-cols-1 gap-8 items-center">
                         <div className="space-y-4">
-                            <div className="pill w-fit">
-                                <Sparkles className="w-4 h-4" />
-                                Live weather, instant visuals
+                            <div className="flex flex-wrap items-center gap-2">
+                                <div className="pill w-fit">
+                                    <Sparkles className="w-4 h-4" />
+                                    Live weather, instant visuals
+                                </div>
+                                <a
+                                    href="https://github.com/AswinAsok/nano-weather-app"
+                                    className="pill flex items-center gap-2 hover:border-slate-400/80 hover:text-slate-900 transition"
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    title="View on GitHub"
+                                >
+                                    <Star className="w-4 h-4 text-slate-800" />
+                                    {githubStars !== null &&
+                                        !githubStarsError &&
+                                        `${githubStars} stars`}
+                                    {githubStars === null &&
+                                        !githubStarsError &&
+                                        "APIs cost snacks—toss a star if this made you smile"}
+                                    {githubStarsError && "GitHub unavailable"}
+                                </a>
                             </div>
                             <h1 className="text-4xl md:text-5xl font-semibold leading-tight text-slate-900">
                                 Search a city. See it now.
