@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Search, MapPin, Sparkles, Star } from "lucide-react";
+import { Search, MapPin, Sparkles, Star, Lightbulb } from "lucide-react";
 import WeatherDisplay from "./components/WeatherDisplay";
 import CityVisualization from "./components/CityVisualization";
 import { fetchWeather, fetchCitySuggestions, type CitySuggestion } from "./services/weatherService";
@@ -91,10 +91,16 @@ function App() {
             <div className="relative min-h-screen overflow-hidden bg-slate-50">
                 <div className="relative max-w-6xl mx-auto px-4 py-6 md:py-12 lg:py-14 space-y-6 md:space-y-10">
                     <div className="glass-panel relative z-20 p-5 md:p-8 lg:p-10 overflow-visible border-slate-200/60">
-                        <div className="flex justify-end mb-4 md:mb-6">
+                        <div className="flex items-center justify-between mb-4 md:mb-6">
+                            <div className="hidden md:flex items-center gap-2">
+                                <div className="pill w-fit">
+                                    <Sparkles className="w-4 h-4" />
+                                    Live weather, instant visuals
+                                </div>
+                            </div>
                             <a
                                 href="https://github.com/AswinAsok/nano-weather-app"
-                                className="pill flex items-center gap-2 hover:border-slate-400/80 hover:text-slate-900 transition"
+                                className="pill flex items-center gap-2 hover:border-slate-400/80 hover:text-slate-900 transition ml-auto"
                                 target="_blank"
                                 rel="noreferrer"
                                 title="View on GitHub"
@@ -109,12 +115,6 @@ function App() {
                         </div>
                         <div className="relative grid grid-cols-1 gap-4 md:gap-8 items-center">
                             <div className="space-y-2 md:space-y-4">
-                                <div className="hidden md:flex flex-wrap items-center gap-2">
-                                    <div className="pill w-fit">
-                                        <Sparkles className="w-4 h-4" />
-                                        Live weather, instant visuals
-                                    </div>
-                                </div>
                                 <h1 className="text-4xl md:text-5xl font-semibold leading-tight text-slate-900">
                                     Search a city. See it now.
                                 </h1>
@@ -207,13 +207,13 @@ function App() {
                                         </p>
                                     )}
 
-                                    <div className="flex flex-wrap gap-2 pt-2">
+                                    <div className="flex gap-2 pt-2 overflow-x-auto">
                                         {featuredCities.map((cityName) => (
                                             <button
                                                 key={cityName}
                                                 type="button"
                                                 onClick={() => setCity(cityName)}
-                                                className="rounded-full border border-slate-200 bg-white/80 px-3 py-2 text-xs text-slate-700 transition hover:border-slate-400 hover:text-slate-900"
+                                                className="rounded-full border border-slate-200 bg-white/80 px-3 py-2 text-xs text-slate-700 transition hover:border-slate-400 hover:text-slate-900 shrink-0"
                                             >
                                                 {cityName}
                                             </button>
@@ -224,8 +224,31 @@ function App() {
                         </div>
                     </div>
 
-                    {weatherData ? (
-                        <div className="space-y-6">
+                    {loading ? (
+                        <div className="glass-panel border-slate-200/80 px-8 py-12 text-center space-y-6">
+                            <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-3xl bg-white/80 border border-slate-200 text-slate-800 shadow-lg shadow-slate-900/10">
+                                <div className="animate-spin rounded-full h-10 w-10 border-3 border-slate-300 border-t-slate-800" />
+                            </div>
+                            <div className="space-y-3">
+                                <p className="text-2xl font-semibold text-slate-900">
+                                    Fetching weather magic...
+                                </p>
+                                <p className="text-slate-600">
+                                    While our cloud hamsters run on their wheels, maybe drop us a star?
+                                </p>
+                                <a
+                                    href="https://github.com/AswinAsok/nano-weather-app"
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="inline-flex items-center gap-2 mt-2 rounded-full bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-slate-900/15 transition hover:bg-slate-800"
+                                >
+                                    <Star className="w-4 h-4" />
+                                    Star the repo, make a dev smile
+                                </a>
+                            </div>
+                        </div>
+                    ) : weatherData ? (
+                        <div className="space-y-6 md:space-y-10">
                             <WeatherDisplay weather={weatherData} />
                             <CityVisualization weather={weatherData} />
                         </div>
@@ -257,6 +280,15 @@ function App() {
                         </div>
                         <div className="flex flex-wrap gap-3 items-center text-sm text-slate-700">
                             <a
+                                href="https://in.linkedin.com/in/hafiscp"
+                                className="pill hover:border-slate-400/80 hover:text-slate-900 transition"
+                                target="_blank"
+                                rel="noreferrer"
+                            >
+                                <Lightbulb className="w-4 h-4 text-slate-800" />
+                                Idea by Hafis CP
+                            </a>
+                            <a
                                 href="https://github.com/AswinAsok/nano-weather-app"
                                 className="pill hover:border-slate-400/80 hover:text-slate-900 transition"
                                 target="_blank"
@@ -265,9 +297,6 @@ function App() {
                                 <Star className="w-4 h-4 text-slate-800" />
                                 View on GitHub
                             </a>
-                            <span className="pill bg-white/70 border-slate-200">
-                                Powered by OpenWeather + Gemini
-                            </span>
                         </div>
                     </footer>
                 </div>

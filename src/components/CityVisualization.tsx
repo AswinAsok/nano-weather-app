@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Download } from 'lucide-react';
+import { Download, Star } from 'lucide-react';
 import type { WeatherData } from '../types/weather';
 import { generateCityImage } from '../services/imageService';
 
@@ -42,8 +42,8 @@ export default function CityVisualization({ weather }: CityVisualizationProps) {
   }, [weather]);
 
   return (
-    <div className="glass-panel relative overflow-hidden p-8 md:p-10">
-      <div className="relative space-y-6">
+    <div className="glass-panel relative overflow-hidden p-5 md:p-10">
+      <div className="relative space-y-4 md:space-y-6">
         <div className="flex items-center justify-between gap-4 flex-wrap">
           <div>
             <p className="text-sm text-slate-600">Generative skyline</p>
@@ -63,14 +63,23 @@ export default function CityVisualization({ weather }: CityVisualizationProps) {
           </div>
         </div>
 
-        <div className="relative rounded-3xl border border-slate-200 bg-white/85 shadow-glow min-h-[360px] flex items-center justify-center overflow-hidden">
+        <div className="relative rounded-2xl md:rounded-3xl border border-slate-200 bg-white/85 shadow-glow min-h-[280px] md:min-h-[360px] flex items-center justify-center overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/5 to-black/15 pointer-events-none" />
 
           {loading && (
             <div className="absolute inset-0 grid place-items-center">
               <div className="text-center space-y-3">
                 <div className="mx-auto h-14 w-14 rounded-full border-4 border-slate-200 border-t-slate-700 animate-spin" />
-                <p className="text-sm text-slate-700">Generating city visualization...</p>
+                <p className="text-sm text-slate-700">Painting your skyline with pixels...</p>
+                <a
+                  href="https://github.com/AswinAsok/nano-weather-app"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-2 rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-lg transition hover:bg-slate-800"
+                >
+                  <Star className="w-4 h-4" />
+                  Star us while you wait!
+                </a>
               </div>
             </div>
           )}
@@ -98,6 +107,21 @@ export default function CityVisualization({ weather }: CityVisualizationProps) {
             </div>
           )}
         </div>
+
+        {imageUrl && !loading && (
+          <div className="flex flex-col md:flex-row items-center justify-center gap-2 md:gap-3 pt-3 md:pt-4">
+            <p className="text-sm text-slate-600">We know you loved it!</p>
+            <a
+              href="https://github.com/AswinAsok/nano-weather-app"
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-2 rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-lg transition hover:bg-slate-800"
+            >
+              <Star className="w-4 h-4" />
+              Star the repo
+            </a>
+          </div>
+        )}
       </div>
     </div>
   );
