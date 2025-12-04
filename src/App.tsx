@@ -5,7 +5,7 @@ import CityVisualization from "./components/CityVisualization";
 import { fetchWeather, fetchCitySuggestions, type CitySuggestion } from "./services/weatherService";
 import { fetchRepoStars } from "./services/githubService";
 import type { WeatherData } from "./types/weather";
-import { Analytics } from "@vercel/analytics/next";
+import { Analytics } from "@vercel/analytics/react";
 
 function App() {
     const [city, setCity] = useState("");
