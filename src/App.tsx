@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { Search, MapPin, Sparkles, Star } from "lucide-react";
 import WeatherDisplay from "./components/WeatherDisplay";
 import CityVisualization from "./components/CityVisualization";
@@ -89,25 +89,27 @@ function App() {
         <>
             <Analytics />
             <div className="relative min-h-screen overflow-hidden bg-slate-50">
-                <div className="relative max-w-6xl mx-auto px-4 py-12 lg:py-14 space-y-10">
-                    <div className="glass-panel relative z-20 p-8 md:p-10 overflow-visible border-slate-200/60">
-                        <a
-                            href="https://github.com/AswinAsok/nano-weather-app"
-                            className="pill flex items-center gap-2 hover:border-slate-400/80 hover:text-slate-900 transition absolute right-6 top-6 md:right-8 md:top-8 z-10"
-                            target="_blank"
-                            rel="noreferrer"
-                            title="View on GitHub"
-                        >
-                            <Star className="w-4 h-4 text-slate-800" />
-                            {githubStars !== null && !githubStarsError && `${githubStars} stars`}
-                            {githubStars === null &&
-                                !githubStarsError &&
-                                "APIs cost snacks—toss a star if this made you smile"}
-                            {githubStarsError && "GitHub unavailable"}
-                        </a>
-                        <div className="relative grid grid-cols-1 gap-8 items-center">
-                            <div className="space-y-4">
-                                <div className="flex flex-wrap items-center gap-2">
+                <div className="relative max-w-6xl mx-auto px-4 py-6 md:py-12 lg:py-14 space-y-6 md:space-y-10">
+                    <div className="glass-panel relative z-20 p-5 md:p-8 lg:p-10 overflow-visible border-slate-200/60">
+                        <div className="flex justify-end mb-4 md:mb-6">
+                            <a
+                                href="https://github.com/AswinAsok/nano-weather-app"
+                                className="pill flex items-center gap-2 hover:border-slate-400/80 hover:text-slate-900 transition"
+                                target="_blank"
+                                rel="noreferrer"
+                                title="View on GitHub"
+                            >
+                                <Star className="w-4 h-4 text-slate-800" />
+                                {githubStars !== null && !githubStarsError && `${githubStars} stars`}
+                                {githubStars === null &&
+                                    !githubStarsError &&
+                                    "APIs cost snacks—toss a star if this made you smile"}
+                                {githubStarsError && "GitHub unavailable"}
+                            </a>
+                        </div>
+                        <div className="relative grid grid-cols-1 gap-4 md:gap-8 items-center">
+                            <div className="space-y-2 md:space-y-4">
+                                <div className="hidden md:flex flex-wrap items-center gap-2">
                                     <div className="pill w-fit">
                                         <Sparkles className="w-4 h-4" />
                                         Live weather, instant visuals
@@ -124,35 +126,37 @@ function App() {
 
                             <form
                                 onSubmit={handleSearch}
-                                className="glass-card border-slate-200/70 p-7 md:p-8 space-y-6 overflow-visible"
+                                className="glass-card border-slate-200/70 p-5 md:p-7 lg:p-8 space-y-4 md:space-y-6 overflow-visible"
                             >
                                 <div className="flex items-center justify-between">
                                     <p className="text-sm text-slate-600">City Search</p>
-                                    <div className="flex items-center gap-2 text-xs text-slate-600">
-                                        <div className="h-2 w-2 rounded-full bg-slate-700 animate-pulse" />
+                                    <div className="flex items-center gap-2 text-xs text-green-600">
+                                        <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse shadow-[0_0_8px_2px_rgba(34,197,94,0.6)]" />
                                         Live
                                     </div>
                                 </div>
 
                                 <div className="flex flex-col gap-4 md:gap-5">
                                     <div className="relative">
-                                        <div className="flex items-center gap-4 rounded-3xl border border-slate-200 bg-white px-5 py-5 md:px-6 md:py-5 shadow-[0_14px_36px_rgba(15,23,42,0.08)] transition focus-within:border-slate-900/70 focus-within:shadow-[0_18px_42px_rgba(15,23,42,0.12)]">
-                                            <MapPin className="w-5 h-5 text-slate-700" />
-                                            <input
-                                                type="text"
-                                                value={city}
-                                                onFocus={() => setShowSuggestions(true)}
-                                                onBlur={() =>
-                                                    setTimeout(() => setShowSuggestions(false), 120)
-                                                }
-                                                onChange={(e) => setCity(e.target.value)}
-                                                placeholder="Search a city or region"
-                                                className="w-full bg-transparent text-slate-900 placeholder:text-slate-400 focus:outline-none"
-                                            />
+                                        <div className="flex flex-col md:flex-row md:items-center gap-3 md:gap-4">
+                                            <div className="flex items-center gap-4 flex-1 rounded-3xl border border-slate-200 bg-white px-5 py-5 md:px-6 md:py-5 shadow-[0_14px_36px_rgba(15,23,42,0.08)] transition focus-within:border-slate-900/70 focus-within:shadow-[0_18px_42px_rgba(15,23,42,0.12)]">
+                                                <MapPin className="w-5 h-5 text-slate-700" />
+                                                <input
+                                                    type="text"
+                                                    value={city}
+                                                    onFocus={() => setShowSuggestions(true)}
+                                                    onBlur={() =>
+                                                        setTimeout(() => setShowSuggestions(false), 120)
+                                                    }
+                                                    onChange={(e) => setCity(e.target.value)}
+                                                    placeholder="Search a city or region"
+                                                    className="w-full bg-transparent text-slate-900 placeholder:text-slate-400 focus:outline-none"
+                                                />
+                                            </div>
                                             <button
                                                 type="submit"
                                                 disabled={loading}
-                                                className="inline-flex items-center gap-2 whitespace-nowrap rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-slate-900/15 transition hover:bg-slate-800 disabled:opacity-60"
+                                                className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-3xl bg-slate-900 px-6 py-4 md:py-5 text-sm font-semibold text-white shadow-lg shadow-slate-900/15 transition hover:bg-slate-800 disabled:opacity-60 w-full md:w-auto"
                                             >
                                                 {loading ? (
                                                     <div className="animate-spin rounded-full h-4 w-4 border-2 border-white/80 border-t-transparent" />
