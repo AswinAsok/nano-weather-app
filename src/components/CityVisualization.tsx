@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Download } from 'lucide-react';
 import type { WeatherData } from '../types/weather';
 import { generateCityImage } from '../services/imageService';
 
@@ -10,6 +11,14 @@ export default function CityVisualization({ weather }: CityVisualizationProps) {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  const handleDownload = () => {
+    if (!imageUrl) return;
+    const link = document.createElement('a');
+    link.href = imageUrl;
+    link.download = `${weather.city.replace(/\s+/g, '_').toLowerCase()}_skyline.png`;
+    link.click();
+  };
 
   useEffect(() => {
     const generateImage = async () => {
@@ -39,16 +48,27 @@ export default function CityVisualization({ weather }: CityVisualizationProps) {
       <div className="absolute -left-6 bottom-6 h-40 w-40 rounded-full bg-blue-300/20 blur-3xl" />
 
       <div className="relative space-y-6">
-        <div className="flex items-center justify-between gap-4">
+        <div className="flex items-center justify-between gap-4 flex-wrap">
           <div>
             <p className="text-sm text-slate-600">Generative skyline</p>
             <h3 className="text-3xl font-semibold text-slate-900">3D City Visualization</h3>
           </div>
-          <span className="pill text-xs">Adaptive to live conditions</span>
+          <div className="flex items-center gap-2">
+            <span className="pill text-xs">Adaptive to live conditions</span>
+            <button
+              type="button"
+              onClick={handleDownload}
+              disabled={!imageUrl}
+              className="inline-flex items-center gap-2 rounded-xl border border-blue-500/20 bg-white/80 px-3 py-2 text-xs font-semibold text-slate-700 shadow-sm transition hover:border-emerald-400/50 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <Download className="w-4 h-4" />
+              Download
+            </button>
+          </div>
         </div>
 
-        <div className="relative aspect-[4/3] overflow-hidden rounded-3xl border border-blue-500/10 bg-white/85 shadow-glow">
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/10 to-black/20" />
+        <div className="relative rounded-3xl border border-blue-500/10 bg-white/85 shadow-glow min-h-[360px] flex items-center justify-center overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/5 to-black/15 pointer-events-none" />
 
           {loading && (
             <div className="absolute inset-0 grid place-items-center">
@@ -72,7 +92,7 @@ export default function CityVisualization({ weather }: CityVisualizationProps) {
             <img
               src={imageUrl}
               alt={`3D visualization of ${weather.city}`}
-              className="w-full h-full object-cover"
+              className="w-full h-full object-contain"
             />
           )}
 

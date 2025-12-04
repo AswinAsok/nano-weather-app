@@ -1,8 +1,9 @@
-import { useState } from 'react';
-import { Search, MapPin, Sparkles } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Search, MapPin, Sparkles, Star } from 'lucide-react';
 import WeatherDisplay from './components/WeatherDisplay';
 import CityVisualization from './components/CityVisualization';
-import { fetchWeather } from './services/weatherService';
+import { fetchWeather, fetchCitySuggestions, type CitySuggestion } from './services/weatherService';
+import { fetchRepoStars } from './services/githubService';
 import type { WeatherData } from './types/weather';
 
 function App() {
@@ -10,8 +11,57 @@ function App() {
   const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [suggestions, setSuggestions] = useState<CitySuggestion[]>([]);
+  const [suggestionsLoading, setSuggestionsLoading] = useState(false);
+  const [githubStars, setGithubStars] = useState<number | null>(null);
+  const [githubStarsError, setGithubStarsError] = useState(false);
 
   const featuredCities = ['Lisbon', 'Berlin', 'Singapore'];
+
+  useEffect(() => {
+    const query = city.trim();
+    if (query.length < 2) {
+      setSuggestions([]);
+      return;
+    }
+
+    let active = true;
+    setSuggestionsLoading(true);
+    const timer = setTimeout(async () => {
+      try {
+        const results = await fetchCitySuggestions(query);
+        if (active) setSuggestions(results);
+      } catch (err) {
+        console.error('Failed to fetch suggestions', err);
+        if (active) setSuggestions([]);
+      } finally {
+        if (active) setSuggestionsLoading(false);
+      }
+    }, 250);
+
+    return () => {
+      active = false;
+      clearTimeout(timer);
+    };
+  }, [city]);
+
+  useEffect(() => {
+    let active = true;
+
+    const loadStars = async () => {
+      try {
+        const stars = await fetchRepoStars();
+        if (active) setGithubStars(stars);
+      } catch (err) {
+        console.error('Failed to fetch GitHub stars', err);
+        if (active) setGithubStarsError(true);
+      }
+    };
+
+    loadStars();
+    return () => { active = false; };
+  }, []);
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -53,14 +103,20 @@ function App() {
           <div className="hidden sm:flex items-center gap-3">
             <span className="pill">Live weather feed</span>
             <span className="pill">Generative cityscapes</span>
+            <span className="pill flex items-center gap-2">
+              <Star className="w-4 h-4 text-amber-500" />
+              {githubStars !== null && !githubStarsError && `${githubStars} stars`}
+              {githubStars === null && !githubStarsError && 'Loading stars'}
+              {githubStarsError && 'GitHub unavailable'}
+            </span>
           </div>
         </header>
 
-        <div className="glass-panel relative p-8 md:p-10 overflow-hidden border-blue-500/10">
+        <div className="glass-panel relative z-20 p-8 md:p-10 overflow-visible border-blue-500/10">
           <div className="absolute right-10 top-4 h-36 w-36 bg-emerald-300/20 blur-3xl" />
           <div className="absolute -left-12 bottom-0 h-48 w-48 bg-blue-400/20 blur-3xl" />
 
-          <div className="relative grid lg:grid-cols-[1.05fr_0.95fr] gap-8 items-center">
+          <div className="relative grid grid-cols-1 gap-8 items-center">
             <div className="space-y-4">
               <div className="pill w-fit">
                 <Sparkles className="w-4 h-4" />
@@ -74,7 +130,7 @@ function App() {
               </p>
             </div>
 
-            <form onSubmit={handleSearch} className="glass-card border-blue-500/15 p-6 md:p-7 space-y-4">
+            <form onSubmit={handleSearch} className="glass-card border-blue-500/15 p-7 md:p-8 space-y-6 overflow-visible">
               <div className="flex items-center justify-between">
                 <p className="text-sm text-slate-600">City Search</p>
                 <div className="flex items-center gap-2 text-xs text-emerald-600">
@@ -83,28 +139,55 @@ function App() {
                 </div>
               </div>
 
-              <div className="flex flex-col gap-3">
-                <div className="flex items-center gap-3 rounded-2xl border border-blue-500/15 bg-white px-4 py-4 shadow-[0_14px_36px_rgba(59,130,246,0.16)] transition focus-within:border-emerald-500/50 focus-within:shadow-[0_18px_42px_rgba(16,185,129,0.22)]">
-                  <MapPin className="w-5 h-5 text-emerald-600" />
-                  <input
-                    type="text"
-                    value={city}
-                    onChange={(e) => setCity(e.target.value)}
-                    placeholder="Search a city or region"
-                    className="w-full bg-transparent text-slate-900 placeholder:text-slate-400 focus:outline-none"
-                  />
-                  <button
-                    type="submit"
-                    disabled={loading}
-                    className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-emerald-500 to-green-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-emerald-500/25 transition hover:brightness-110 disabled:opacity-60"
-                  >
-                    {loading ? (
-                      <div className="animate-spin rounded-full h-4 w-4 border-2 border-white/80 border-t-transparent" />
-                    ) : (
-                      <Search className="w-4 h-4" />
-                    )}
-                    {loading ? 'Searching' : 'Fetch weather'}
-                  </button>
+              <div className="flex flex-col gap-4 md:gap-5">
+                <div className="relative">
+                  <div className="flex items-center gap-4 rounded-3xl border border-blue-500/15 bg-white px-5 py-5 md:px-6 md:py-5 shadow-[0_14px_36px_rgba(59,130,246,0.16)] transition focus-within:border-emerald-500/50 focus-within:shadow-[0_18px_42px_rgba(16,185,129,0.22)]">
+                    <MapPin className="w-5 h-5 text-emerald-600" />
+                    <input
+                      type="text"
+                      value={city}
+                      onFocus={() => setShowSuggestions(true)}
+                      onBlur={() => setTimeout(() => setShowSuggestions(false), 120)}
+                      onChange={(e) => setCity(e.target.value)}
+                      placeholder="Search a city or region"
+                      className="w-full bg-transparent text-slate-900 placeholder:text-slate-400 focus:outline-none"
+                    />
+                    <button
+                      type="submit"
+                      disabled={loading}
+                      className="inline-flex items-center gap-2 whitespace-nowrap rounded-xl bg-gradient-to-r from-emerald-500 to-green-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-emerald-500/25 transition hover:brightness-110 disabled:opacity-60"
+                    >
+                      {loading ? (
+                        <div className="animate-spin rounded-full h-4 w-4 border-2 border-white/80 border-t-transparent" />
+                      ) : (
+                        <Search className="w-4 h-4" />
+                      )}
+                      {loading ? 'Searching' : 'Fetch weather'}
+                    </button>
+                  </div>
+
+                  {showSuggestions && (suggestions.length > 0 || suggestionsLoading) && (
+                    <div className="absolute left-0 right-0 mt-2 rounded-2xl border border-blue-500/15 bg-white shadow-lg shadow-blue-200/60 overflow-hidden z-50 max-h-64 overflow-auto">
+                      {suggestionsLoading && (
+                        <div className="px-4 py-3 text-sm text-slate-500">Searching...</div>
+                      )}
+                      {suggestions.map((suggestion) => (
+                        <button
+                          key={`${suggestion.name}-${suggestion.lat}-${suggestion.lon}`}
+                          type="button"
+                          onMouseDown={(e) => e.preventDefault()}
+                          onClick={() => {
+                            setCity(suggestion.name);
+                            setShowSuggestions(false);
+                          }}
+                          className="w-full text-left px-4 py-3 text-sm text-slate-800 hover:bg-emerald-50"
+                        >
+                          <span className="font-semibold">{suggestion.name}</span>
+                          {suggestion.state ? `, ${suggestion.state}` : ''} {suggestion.country ? `(${suggestion.country})` : ''}
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 {error && (
@@ -148,6 +231,25 @@ function App() {
             </div>
           </div>
         )}
+
+        <footer className="glass-card border-blue-500/10 px-6 py-5 md:px-8 md:py-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div className="space-y-1">
+            <p className="text-xs uppercase tracking-[0.18em] text-emerald-600">Nano Weather Studio</p>
+            <p className="text-sm text-slate-600">Live data, generative skylines, and adaptive lighting in one glance.</p>
+          </div>
+          <div className="flex flex-wrap gap-3 items-center text-sm text-slate-700">
+            <a
+              href="https://github.com/AswinAsok/nano-weather-app"
+              className="pill hover:border-emerald-400/50 hover:text-emerald-700 transition"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <Star className="w-4 h-4 text-amber-500" />
+              View on GitHub
+            </a>
+            <span className="pill bg-white/70 border-blue-500/15">Powered by OpenWeather + Vite</span>
+          </div>
+        </footer>
       </div>
     </div>
   );

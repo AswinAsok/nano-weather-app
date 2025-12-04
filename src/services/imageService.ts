@@ -1,82 +1,96 @@
-import type { WeatherData } from '../types/weather';
+import type { WeatherData } from "../types/weather";
 
 function getTimeOfDay(timezone: number): string {
-  const now = new Date();
-  const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
-  const cityTime = new Date(utc + (timezone * 1000));
-  const hour = cityTime.getHours();
+    const now = new Date();
+    const utc = now.getTime() + now.getTimezoneOffset() * 60000;
+    const cityTime = new Date(utc + timezone * 1000);
+    const hour = cityTime.getHours();
 
-  if (hour >= 5 && hour < 8) return 'sunrise';
-  if (hour >= 8 && hour < 12) return 'morning';
-  if (hour >= 12 && hour < 17) return 'midday';
-  if (hour >= 17 && hour < 20) return 'sunset';
-  if (hour >= 20 || hour < 5) return 'night';
-  return 'day';
+    if (hour >= 5 && hour < 8) return "sunrise";
+    if (hour >= 8 && hour < 12) return "morning";
+    if (hour >= 12 && hour < 17) return "midday";
+    if (hour >= 17 && hour < 20) return "sunset";
+    if (hour >= 20 || hour < 5) return "night";
+    return "day";
 }
 
 function getLocalTime(timezone: number): string {
-  const now = new Date();
-  const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
-  const cityTime = new Date(utc + (timezone * 1000));
-  return cityTime.toLocaleTimeString('en-US', {
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: true
-  });
+    const now = new Date();
+    const utc = now.getTime() + now.getTimezoneOffset() * 60000;
+    const cityTime = new Date(utc + timezone * 1000);
+    return cityTime.toLocaleTimeString("en-US", {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true,
+    });
 }
 
 function getLocalDate(timezone: number): string {
-  const now = new Date();
-  const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
-  const cityTime = new Date(utc + (timezone * 1000));
-  return cityTime.toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric'
-  });
+    const now = new Date();
+    const utc = now.getTime() + now.getTimezoneOffset() * 60000;
+    const cityTime = new Date(utc + timezone * 1000);
+    return cityTime.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+    });
 }
 
 function getWeatherIcon(description: string): string {
-  const desc = description.toLowerCase();
-  if (desc.includes('clear')) return '☀️';
-  if (desc.includes('cloud')) return '☁️';
-  if (desc.includes('rain')) return '🌧️';
-  if (desc.includes('storm') || desc.includes('thunder')) return '⛈️';
-  if (desc.includes('snow')) return '❄️';
-  if (desc.includes('mist') || desc.includes('fog')) return '🌫️';
-  return '🌤️';
+    const desc = description.toLowerCase();
+    if (desc.includes("clear")) return "☀️";
+    if (desc.includes("cloud")) return "☁️";
+    if (desc.includes("rain")) return "🌧️";
+    if (desc.includes("storm") || desc.includes("thunder")) return "⛈️";
+    if (desc.includes("snow")) return "❄️";
+    if (desc.includes("mist") || desc.includes("fog")) return "🌫️";
+    return "🌤️";
 }
 
 function buildPrompt(weather: WeatherData): string {
-  const timeOfDay = getTimeOfDay(weather.timezone);
-  const localTime = getLocalTime(weather.timezone);
-  const localDate = getLocalDate(weather.timezone);
-  const weatherIcon = getWeatherIcon(weather.description);
+    const timeOfDay = getTimeOfDay(weather.timezone);
+    const localTime = getLocalTime(weather.timezone);
+    const localDate = getLocalDate(weather.timezone);
+    const weatherIcon = getWeatherIcon(weather.description);
 
-  let lightingDescription = '';
-  switch (timeOfDay) {
-    case 'sunrise':
-    case 'sunset':
-      lightingDescription = 'warm golden hour tones with soft orange and pink hues';
-      break;
-    case 'morning':
-      lightingDescription = 'bright morning sun with clear, crisp lighting';
-      break;
-    case 'midday':
-      lightingDescription = 'bright midday sun with sharp shadows';
-      break;
-    case 'night':
-      lightingDescription = 'dark night scene with illuminated windows and street lights';
-      break;
-    default:
-      lightingDescription = 'natural daylight with soft shadows';
-  }
+    let lightingDescription = "";
+    switch (timeOfDay) {
+        case "sunrise":
+        case "sunset":
+            lightingDescription = "warm golden hour tones with soft orange and pink hues";
+            break;
+        case "morning":
+            lightingDescription = "bright morning sun with clear, crisp lighting";
+            break;
+        case "midday":
+            lightingDescription = "bright midday sun with sharp shadows";
+            break;
+        case "night":
+            lightingDescription = "dark night scene with illuminated windows and street lights";
+            break;
+        default:
+            lightingDescription = "natural daylight with soft shadows";
+    }
 
-  return `Present a clear, 45° top-down isometric miniature 3D cartoon scene of ${weather.city}, featuring its most iconic landmarks and architectural elements. Use soft, refined textures with realistic PBR materials and lighting that reflects ${lightingDescription}.
+    return `Create an ultra-detailed, 45° top-down isometric miniature diorama of ${
+        weather.city
+    }. Research and faithfully recreate 4-6 of its most iconic, globally recognized landmarks and skyline anchors (towers, bridges, statues, cathedrals, arenas, waterfronts) with accurate silhouettes, materials, and proportions—avoid generic stand-ins. Layer the scene with foreground plazas and streets, mid-ground landmarks, and a background skyline or hills, plus signage, transit cues, and street furniture that fit the city.
 
-Integrate both the current weather conditions (${weather.description}) and time-based atmospheric effects directly into the city environment. Show appropriate activity levels - ${timeOfDay === 'night' ? 'quieter scenes with illuminated buildings' : 'bustling streets with activity'}.
+Use premium, physically based materials and high-frequency micro-detailing: brick courses, window mullions, rooftop HVAC units, balcony rails, crosswalk markings, benches, varied foliage, and reflective glass. Light the scene with ${lightingDescription}, including subtle volumetric light and realistic shadows.
 
-Use a clean, minimalistic composition with a soft, solid-colored background that complements the time of day.
+Integrate the current weather (${
+        weather.description
+    }) and the ${timeOfDay} atmosphere directly into the environment: ${
+        timeOfDay === "night"
+            ? "glowing windows, neon accents, and reflective wet asphalt if rainy"
+            : "sun glow, aerial haze, crisp shadows; wet surfaces or puddles if rainy and snow accumulation if snowy"
+    }. Show context-appropriate activity levels—${
+        timeOfDay === "night"
+            ? "calmer streets with illuminated buildings and selective traffic"
+            : "bustling streets with pedestrians and light traffic"
+    } that align to the weather. Populate the streets with authentic local vehicles (taxis, trams, buses, scooters) carrying regional colors, signage, and liveries.
+
+Use a clean, minimal backdrop that complements the time of day so the diorama pops—avoid flat white; use soft gradients or subtle geometric/halftone patterns with very low contrast.
 
 At the top-center, place the title "${weather.city}" in large bold text, followed by:
 - A prominent weather icon ${weatherIcon}
@@ -84,35 +98,41 @@ At the top-center, place the title "${weather.city}" in large bold text, followe
 - The date "${localDate}" (small text)
 - Temperature "${weather.temperature}°C" (medium text)
 
-All text must be centered with consistent spacing, and may subtly overlap the tops of the buildings. The text color should contrast appropriately with the time-based background.
+All text is centered with consistent spacing and may subtly overlap the tallest buildings; the text color must contrast with the background.
 
-Include time-specific details like:
-- Window lights (${timeOfDay === 'night' ? 'brightly lit' : 'reflecting daylight'})
-- Street lamp illumination ${timeOfDay === 'night' ? 'glowing warmly' : 'inactive'}
+Include time-specific detailing:
+- Window lights (${
+        timeOfDay === "night"
+            ? "bright and varied by floor"
+            : "reflecting daylight with interior parallax"
+    })
+- Street lamps ${timeOfDay === "night" ? "glowing warmly with halo" : "present but off"}
 - Shadows angle and length based on ${timeOfDay} sun position
-- Sky color gradients reflecting the exact hour
-- Traffic density patterns matching typical city rhythms
+- Sky gradients and horizon haze matching the exact hour
+- Traffic and pedestrian density following typical city rhythms
+- City-relevant vehicles visible on streets and avenues, rendered to real scale and styling
+- If daytime, include pedestrians wearing clothing and accessories that reflect local culture, climate, and color palettes; at night, keep silhouettes subtle and sparse
 
-Square 1080x1080 dimension.`;
+Square 1080x1080 composition.`;
 }
 
 export async function generateCityImage(weather: WeatherData): Promise<string> {
-  const prompt = buildPrompt(weather);
+    const prompt = buildPrompt(weather);
 
-  const res = await fetch('/api/generate-image', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ prompt }),
-  });
+    const res = await fetch("/api/generate-image", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt }),
+    });
 
-  if (!res.ok) {
-    const message = await res.text();
-    throw new Error(message || 'Image generation failed');
-  }
+    if (!res.ok) {
+        const message = await res.text();
+        throw new Error(message || "Image generation failed");
+    }
 
-  const data = (await res.json()) as { dataUrl?: string; error?: string };
-  if (data.error) throw new Error(data.error);
-  if (!data.dataUrl) throw new Error('No image returned from server');
+    const data = (await res.json()) as { dataUrl?: string; error?: string };
+    if (data.error) throw new Error(data.error);
+    if (!data.dataUrl) throw new Error("No image returned from server");
 
-  return data.dataUrl;
+    return data.dataUrl;
 }
