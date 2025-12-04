@@ -42,11 +42,7 @@ export default function CityVisualization({ weather }: CityVisualizationProps) {
   }, [weather]);
 
   return (
-    <div className="glass-panel relative overflow-hidden p-8 md:p-10 border-blue-500/10">
-      <div className="absolute inset-0 bg-gradient-to-tr from-white/40 via-white/0 to-white/40" />
-      <div className="absolute -right-8 top-6 h-44 w-44 rounded-full bg-emerald-300/20 blur-3xl" />
-      <div className="absolute -left-6 bottom-6 h-40 w-40 rounded-full bg-blue-300/20 blur-3xl" />
-
+    <div className="glass-panel relative overflow-hidden p-8 md:p-10">
       <div className="relative space-y-6">
         <div className="flex items-center justify-between gap-4 flex-wrap">
           <div>
@@ -59,7 +55,7 @@ export default function CityVisualization({ weather }: CityVisualizationProps) {
               type="button"
               onClick={handleDownload}
               disabled={!imageUrl}
-              className="inline-flex items-center gap-2 rounded-xl border border-blue-500/20 bg-white/80 px-3 py-2 text-xs font-semibold text-slate-700 shadow-sm transition hover:border-emerald-400/50 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white/80 px-3 py-2 text-xs font-semibold text-slate-800 shadow-sm transition hover:border-slate-400 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Download className="w-4 h-4" />
               Download
@@ -67,13 +63,13 @@ export default function CityVisualization({ weather }: CityVisualizationProps) {
           </div>
         </div>
 
-        <div className="relative rounded-3xl border border-blue-500/10 bg-white/85 shadow-glow min-h-[360px] flex items-center justify-center overflow-hidden">
+        <div className="relative rounded-3xl border border-slate-200 bg-white/85 shadow-glow min-h-[360px] flex items-center justify-center overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/5 to-black/15 pointer-events-none" />
 
           {loading && (
             <div className="absolute inset-0 grid place-items-center">
               <div className="text-center space-y-3">
-                <div className="mx-auto h-14 w-14 rounded-full border-4 border-blue-200 border-t-emerald-400 animate-spin" />
+                <div className="mx-auto h-14 w-14 rounded-full border-4 border-slate-200 border-t-slate-700 animate-spin" />
                 <p className="text-sm text-slate-700">Generating city visualization...</p>
               </div>
             </div>

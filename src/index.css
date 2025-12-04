@@ -10,27 +10,23 @@
   }
 
   body {
-    @apply bg-white text-slate-900 font-sans antialiased;
-    background-image:
-      radial-gradient(circle at 20% 20%, rgba(79, 70, 229, 0.08), transparent 28%),
-      radial-gradient(circle at 80% 0%, rgba(16, 185, 129, 0.12), transparent 32%),
-      radial-gradient(circle at 20% 90%, rgba(37, 99, 235, 0.08), transparent 30%),
-      linear-gradient(145deg, #f9fbff 0%, #ecf4ff 48%, #f9fbff 100%);
+    @apply bg-slate-50 text-slate-900 font-sans antialiased;
+    background: linear-gradient(180deg, #f8f9fb 0%, #f2f3f5 100%);
     min-height: 100vh;
   }
 }
 
 @layer components {
   .glass-panel {
-    @apply bg-white/70 border border-white/50 backdrop-blur-2xl rounded-3xl shadow-glass; 
+    @apply bg-white/80 border border-slate-200/80 backdrop-blur-2xl rounded-3xl shadow-glass; 
   }
 
   .glass-card {
-    @apply bg-white/75 border border-blue-500/10 backdrop-blur-2xl rounded-2xl shadow-glow;
+    @apply bg-white/80 border border-slate-200/80 backdrop-blur-2xl rounded-2xl shadow-glow;
   }
 
   .pill {
-    @apply inline-flex items-center gap-2 px-4 py-2 rounded-full border border-blue-500/10 bg-white/80 text-sm text-slate-700;
+    @apply inline-flex items-center gap-2 px-4 py-2 rounded-full border border-slate-200/80 bg-white/80 text-sm text-slate-700;
   }
 
   .grid-overlay {

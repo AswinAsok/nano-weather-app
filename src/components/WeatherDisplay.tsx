@@ -25,11 +25,7 @@ export default function WeatherDisplay({ weather }: WeatherDisplayProps) {
   };
 
   return (
-    <div className="glass-panel relative overflow-hidden p-8 md:p-10 border-blue-500/10">
-      <div className="absolute inset-0 bg-gradient-to-br from-white/40 via-white/0 to-white/40" />
-      <div className="absolute -right-16 top-10 h-48 w-48 rounded-full bg-emerald-300/25 blur-3xl" />
-      <div className="absolute -left-10 bottom-0 h-56 w-56 rounded-full bg-blue-300/20 blur-3xl" />
-
+    <div className="glass-panel relative overflow-hidden p-8 md:p-10">
       <div className="relative space-y-8">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
           <div className="space-y-3">
@@ -45,13 +41,13 @@ export default function WeatherDisplay({ weather }: WeatherDisplayProps) {
               <span className="text-sm">
                 Local time {localTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
               </span>
-              <span className="text-xs rounded-full bg-white/70 px-3 py-1 border border-blue-500/10 text-slate-700">
+              <span className="text-xs rounded-full bg-white/70 px-3 py-1 border border-slate-200 text-slate-700">
                 {weather.description}
               </span>
             </div>
           </div>
 
-          <div className="flex items-center gap-5 rounded-2xl border border-blue-500/15 bg-white/85 px-6 py-5 shadow-glow">
+          <div className="flex items-center gap-5 rounded-2xl border border-slate-200 bg-white/85 px-6 py-5 shadow-glow">
             <div className="text-6xl">
               {getWeatherEmoji(weather.icon)}
             </div>
@@ -60,14 +56,14 @@ export default function WeatherDisplay({ weather }: WeatherDisplayProps) {
                 {weather.temperature}°C
               </p>
               <p className="text-slate-600">Feels like {weather.feelsLike}°C</p>
-              <p className="text-xs text-emerald-600">Updated just now</p>
+              <p className="text-xs text-slate-600">Updated just now</p>
             </div>
           </div>
         </div>
 
-        <div className="glass-card border-blue-500/10 p-5 sm:p-6 grid sm:grid-cols-3 gap-4 items-center">
+        <div className="glass-card border-slate-200/70 p-5 sm:p-6 grid sm:grid-cols-3 gap-4 items-center">
           <div className="flex items-center gap-3 sm:col-span-2">
-            <Thermometer className="w-10 h-10 text-emerald-600" />
+            <Thermometer className="w-10 h-10 text-slate-700" />
             <div>
               <p className="text-sm text-slate-600">Thermal comfort</p>
               <p className="text-lg text-slate-900 font-semibold">{weather.description}</p>
@@ -75,9 +71,9 @@ export default function WeatherDisplay({ weather }: WeatherDisplayProps) {
             </div>
           </div>
           <div className="flex flex-wrap gap-2 justify-end text-xs">
-            <span className="px-3 py-2 rounded-full bg-emerald-500/10 border border-emerald-400/30 text-emerald-700">Air</span>
-            <span className="px-3 py-2 rounded-full bg-blue-500/10 border border-blue-400/30 text-blue-700">Visibility</span>
-            <span className="px-3 py-2 rounded-full bg-cyan-500/10 border border-cyan-400/30 text-cyan-700">Pressure</span>
+            <span className="px-3 py-2 rounded-full bg-slate-100 border border-slate-200 text-slate-700">Air</span>
+            <span className="px-3 py-2 rounded-full bg-slate-100 border border-slate-200 text-slate-700">Visibility</span>
+            <span className="px-3 py-2 rounded-full bg-slate-100 border border-slate-200 text-slate-700">Pressure</span>
           </div>
         </div>
 
@@ -87,27 +83,27 @@ export default function WeatherDisplay({ weather }: WeatherDisplayProps) {
             value: `${weather.humidity}%`,
             helper: 'Ambient moisture right now.',
             icon: Droplets,
-            accent: 'from-cyan-400/25 to-transparent',
+            accent: 'from-slate-200/70 to-transparent',
           }, {
             label: 'Wind',
             value: `${weather.windSpeed} m/s`,
             helper: 'Surface wind speed recorded.',
             icon: Wind,
-            accent: 'from-emerald-400/25 to-transparent',
+            accent: 'from-slate-200/70 to-transparent',
           }, {
             label: 'Pressure',
             value: `${weather.pressure} hPa`,
             helper: 'Sea-level adjusted pressure.',
             icon: Gauge,
-            accent: 'from-indigo-400/20 to-transparent',
+            accent: 'from-slate-200/70 to-transparent',
           }, {
             label: 'Visibility',
             value: `${weather.visibility} km`,
             helper: 'Line of sight in kilometers.',
             icon: Eye,
-            accent: 'from-amber-400/20 to-transparent',
+            accent: 'from-slate-200/70 to-transparent',
           }].map((metric) => (
-            <div key={metric.label} className="glass-card relative overflow-hidden p-4 border-blue-500/10">
+            <div key={metric.label} className="glass-card relative overflow-hidden p-4 border-slate-200/70">
               <div className={`absolute inset-0 bg-gradient-to-br ${metric.accent} opacity-70`} />
               <div className="relative flex items-start justify-between gap-4">
                 <div className="space-y-1">
