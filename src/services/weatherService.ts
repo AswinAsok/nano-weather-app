@@ -38,6 +38,33 @@ export async function fetchWeather(city: string): Promise<WeatherData> {
   };
 }
 
+export async function fetchWeatherByCoords(lat: number, lon: number): Promise<WeatherData> {
+  const response = await fetch(
+    `${WEATHER_API_URL}?lat=${lat}&lon=${lon}&appid=${WEATHER_API_KEY}&units=metric`
+  );
+
+  if (!response.ok) {
+    throw new Error('Location not found');
+  }
+
+  const data = await response.json();
+
+  return {
+    city: data.name,
+    country: data.sys.country,
+    temperature: Math.round(data.main.temp),
+    feelsLike: Math.round(data.main.feels_like),
+    description: data.weather[0].description,
+    humidity: data.main.humidity,
+    windSpeed: data.wind.speed,
+    pressure: data.main.pressure,
+    visibility: data.visibility / 1000,
+    icon: data.weather[0].icon,
+    timezone: data.timezone,
+    timestamp: Date.now(),
+  };
+}
+
 export async function fetchCitySuggestions(query: string): Promise<CitySuggestion[]> {
   const trimmed = query.trim();
   if (!trimmed) return [];

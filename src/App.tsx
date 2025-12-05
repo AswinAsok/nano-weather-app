@@ -2,7 +2,12 @@ import { useEffect, useState } from "react";
 import { Search, MapPin, Sparkles, Star, Lightbulb } from "lucide-react";
 import WeatherDisplay from "./components/WeatherDisplay";
 import CityVisualization from "./components/CityVisualization";
-import { fetchWeather, fetchCitySuggestions, type CitySuggestion } from "./services/weatherService";
+import {
+    fetchWeather,
+    fetchWeatherByCoords,
+    fetchCitySuggestions,
+    type CitySuggestion,
+} from "./services/weatherService";
 import { fetchRepoStars } from "./services/githubService";
 import type { WeatherData } from "./types/weather";
 import { Analytics } from "@vercel/analytics/react";
@@ -11,6 +16,7 @@ function App() {
     const [city, setCity] = useState("");
     const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
     const [loading, setLoading] = useState(false);
+    const [locating, setLocating] = useState(false);
     const [error, setError] = useState("");
     const [showSuggestions, setShowSuggestions] = useState(false);
     const [suggestions, setSuggestions] = useState<CitySuggestion[]>([]);
@@ -85,6 +91,45 @@ function App() {
         }
     };
 
+    const handleUseCurrentLocation = () => {
+        if (!navigator.geolocation) {
+            setError("Location is not supported in this browser. Please search for a city instead.");
+            return;
+        }
+
+        setLocating(true);
+        setLoading(true);
+        setError("");
+        setShowSuggestions(false);
+
+        navigator.geolocation.getCurrentPosition(
+            async (position) => {
+                try {
+                    const data = await fetchWeatherByCoords(
+                        position.coords.latitude,
+                        position.coords.longitude
+                    );
+                    setWeatherData(data);
+                    setCity(data.city);
+                } catch (err) {
+                    console.error("Failed to fetch location weather", err);
+                    setError("Unable to fetch weather for your location. Try searching instead.");
+                    setWeatherData(null);
+                } finally {
+                    setLocating(false);
+                    setLoading(false);
+                }
+            },
+            (geoError) => {
+                console.error("Geolocation error", geoError);
+                setError("Location permission denied. Please allow access or search for a city.");
+                setLocating(false);
+                setLoading(false);
+            },
+            { timeout: 10000 }
+        );
+    };
+
     return (
         <>
             <Analytics />
@@ -153,6 +198,19 @@ function App() {
                                                     className="w-full bg-transparent text-slate-900 placeholder:text-slate-400 focus:outline-none"
                                                 />
                                             </div>
+                                            <button
+                                                type="button"
+                                                onClick={handleUseCurrentLocation}
+                                                disabled={loading || locating}
+                                                className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-3xl border border-slate-200 bg-white px-6 py-4 md:py-5 text-sm font-semibold text-slate-800 shadow-[0_14px_36px_rgba(15,23,42,0.06)] transition hover:border-slate-400 hover:text-slate-900 disabled:opacity-60 w-full md:w-auto"
+                                            >
+                                                {locating ? (
+                                                    <div className="animate-spin rounded-full h-4 w-4 border-2 border-slate-800/80 border-t-transparent" />
+                                                ) : (
+                                                    <MapPin className="w-4 h-4" />
+                                                )}
+                                                {locating ? "Getting location" : "Use my location"}
+                                            </button>
                                             <button
                                                 type="submit"
                                                 disabled={loading}
