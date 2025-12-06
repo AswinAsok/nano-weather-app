@@ -1,134 +1,65 @@
-import { useEffect, useState } from "react";
-import { Search, MapPin, Sparkles, Star, Lightbulb } from "lucide-react";
-import WeatherDisplay from "./components/WeatherDisplay";
-import CityVisualization from "./components/CityVisualization";
-import {
-    fetchWeather,
-    fetchWeatherByCoords,
-    fetchCitySuggestions,
-    type CitySuggestion,
-} from "./services/weatherService";
-import { fetchRepoStars } from "./services/githubService";
-import type { WeatherData } from "./types/weather";
 import { Analytics } from "@vercel/analytics/react";
+import { useCallback, useState } from "react";
+import { Lightbulb, MapPin, Search, Sparkles, Star } from "lucide-react";
+import CityVisualization from "./components/CityVisualization";
+import WeatherDisplay from "./components/WeatherDisplay";
+import { useCitySuggestions } from "./hooks/useCitySuggestions";
+import { useGithubStars } from "./hooks/useGithubStars";
+import { useWeatherController } from "./hooks/useWeatherController";
+import { defaultServices } from "./services";
+
+const { weatherService, githubRepoService, geolocationService, imageService } = defaultServices;
 
 function App() {
     const [city, setCity] = useState("");
-    const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
-    const [loading, setLoading] = useState(false);
     const [locating, setLocating] = useState(false);
-    const [error, setError] = useState("");
     const [showSuggestions, setShowSuggestions] = useState(false);
-    const [suggestions, setSuggestions] = useState<CitySuggestion[]>([]);
-    const [suggestionsLoading, setSuggestionsLoading] = useState(false);
-    const [githubStars, setGithubStars] = useState<number | null>(null);
-    const [githubStarsError, setGithubStarsError] = useState(false);
+
+    const {
+        weatherData,
+        loading,
+        error,
+        searchByCity,
+        searchByCoords,
+        clearError,
+        setCustomError,
+    } = useWeatherController(weatherService);
+    const { suggestions, loading: suggestionsLoading } = useCitySuggestions(city, weatherService);
+    const { stars: githubStars, error: githubStarsError } = useGithubStars(githubRepoService);
 
     const featuredCities = ["Lisbon", "Berlin", "Singapore"];
 
-    useEffect(() => {
-        const query = city.trim();
-        if (query.length < 2) {
-            setSuggestions([]);
-            return;
-        }
+    const handleSearch = useCallback(
+        async (e: React.FormEvent) => {
+            e.preventDefault();
+            const trimmed = city.trim();
+            if (!trimmed) return;
 
-        let active = true;
-        setSuggestionsLoading(true);
-        const timer = setTimeout(async () => {
-            try {
-                const results = await fetchCitySuggestions(query);
-                if (active) setSuggestions(results);
-            } catch (err) {
-                console.error("Failed to fetch suggestions", err);
-                if (active) setSuggestions([]);
-            } finally {
-                if (active) setSuggestionsLoading(false);
-            }
-        }, 250);
+            clearError();
+            await searchByCity(trimmed);
+        },
+        [city, clearError, searchByCity]
+    );
 
-        return () => {
-            active = false;
-            clearTimeout(timer);
-        };
-    }, [city]);
-
-    useEffect(() => {
-        let active = true;
-
-        const loadStars = async () => {
-            try {
-                const stars = await fetchRepoStars();
-                if (active) setGithubStars(stars);
-            } catch (err) {
-                console.error("Failed to fetch GitHub stars", err);
-                if (active) setGithubStarsError(true);
-            }
-        };
-
-        loadStars();
-        return () => {
-            active = false;
-        };
-    }, []);
-
-    const handleSearch = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!city.trim()) return;
-
-        setLoading(true);
-        setError("");
-
-        try {
-            const data = await fetchWeather(city);
-            setWeatherData(data);
-        } catch (err) {
-            console.error("Failed to fetch weather", err);
-            setError("City not found. Please try again.");
-            setWeatherData(null);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const handleUseCurrentLocation = () => {
-        if (!navigator.geolocation) {
-            setError("Location is not supported in this browser. Please search for a city instead.");
-            return;
-        }
-
+    const handleUseCurrentLocation = useCallback(async () => {
         setLocating(true);
-        setLoading(true);
-        setError("");
+        clearError();
         setShowSuggestions(false);
 
-        navigator.geolocation.getCurrentPosition(
-            async (position) => {
-                try {
-                    const data = await fetchWeatherByCoords(
-                        position.coords.latitude,
-                        position.coords.longitude
-                    );
-                    setWeatherData(data);
-                    setCity(data.city);
-                } catch (err) {
-                    console.error("Failed to fetch location weather", err);
-                    setError("Unable to fetch weather for your location. Try searching instead.");
-                    setWeatherData(null);
-                } finally {
-                    setLocating(false);
-                    setLoading(false);
-                }
-            },
-            (geoError) => {
-                console.error("Geolocation error", geoError);
-                setError("Location permission denied. Please allow access or search for a city.");
-                setLocating(false);
-                setLoading(false);
-            },
-            { timeout: 10000 }
-        );
-    };
+        try {
+            const coords = await geolocationService.getCurrentPosition({ timeout: 10000 });
+            const data = await searchByCoords(coords.latitude, coords.longitude);
+            if (data) setCity(data.city);
+        } catch (err) {
+            const message =
+                err instanceof Error
+                    ? err.message
+                    : "Location permission denied. Please allow access or search for a city.";
+            setCustomError(message);
+        } finally {
+            setLocating(false);
+        }
+    }, [clearError, geolocationService, searchByCoords, setCustomError]);
 
     return (
         <>
@@ -308,7 +239,7 @@ function App() {
                     ) : weatherData ? (
                         <div className="space-y-6 md:space-y-10">
                             <WeatherDisplay weather={weatherData} />
-                            <CityVisualization weather={weatherData} />
+                            <CityVisualization weather={weatherData} imageService={imageService} />
                         </div>
                     ) : (
                         <div className="glass-panel border-slate-200/80 px-8 py-12 text-center space-y-6">
