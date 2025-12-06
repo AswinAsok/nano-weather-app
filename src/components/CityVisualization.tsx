@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Download, Star } from "lucide-react";
 import type { ImageService } from "../services/contracts";
 import { defaultServices } from "../services";
@@ -17,6 +17,24 @@ export default function CityVisualization({
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
 
+    const generateImage = useCallback(async () => {
+        setLoading(true);
+        setError("");
+        setImageUrl(null);
+
+        try {
+            const url = await imageService.generateCityImage(weather);
+            setImageUrl(url);
+        } catch (err) {
+            const message =
+                err instanceof Error ? err.message : "Failed to generate city visualization";
+            setError(message);
+            console.error("Image generation error:", err);
+        } finally {
+            setLoading(false);
+        }
+    }, [imageService, weather]);
+
     const handleDownload = () => {
         if (!imageUrl) return;
         const link = document.createElement("a");
@@ -26,26 +44,8 @@ export default function CityVisualization({
     };
 
     useEffect(() => {
-        const generateImage = async () => {
-            setLoading(true);
-            setError("");
-            setImageUrl(null);
-
-            try {
-                const url = await imageService.generateCityImage(weather);
-                setImageUrl(url);
-            } catch (err) {
-                const message =
-                    err instanceof Error ? err.message : "Failed to generate city visualization";
-                setError(message);
-                console.error("Image generation error:", err);
-            } finally {
-                setLoading(false);
-            }
-        };
-
         generateImage();
-    }, [imageService, weather]);
+    }, [generateImage]);
 
     return (
         <div className="glass-panel relative overflow-hidden p-5 md:p-10">
@@ -90,14 +90,24 @@ export default function CityVisualization({
                         </div>
                     )}
 
-                    {error && (
-                        <div className="absolute inset-0 flex items-center justify-center p-6">
-                            <div className="text-center text-red-600 space-y-2">
-                                <p className="font-medium">Image generation failed</p>
-                                <p className="text-sm text-red-600/80 max-w-md">{error}</p>
-                            </div>
-                        </div>
-                    )}
+          {error && (
+            <div className="absolute inset-0 flex items-center justify-center p-6">
+              <div className="text-center text-red-600 space-y-3">
+                <div className="space-y-1">
+                  <p className="font-medium">Image generation failed</p>
+                  <p className="text-sm text-red-600/80 max-w-md">{error}</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={generateImage}
+                  disabled={loading}
+                  className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-slate-800 border border-slate-200 shadow-sm transition hover:border-slate-400 disabled:opacity-60"
+                >
+                  Retry
+                </button>
+              </div>
+            </div>
+          )}
 
                     {imageUrl && !loading && (
                         <img
