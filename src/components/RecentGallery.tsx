@@ -256,12 +256,7 @@ export function RecentGallery({
                         <Sparkles className="w-4 h-4" />
                         Live gallery
                     </div>
-                    <div className="text-left">
-                        <p className="text-sm text-slate-600">Recently generated skylines</p>
-                        <h3 className="text-2xl font-semibold text-slate-900">
-                            Last {limit} creations
-                        </h3>
-                    </div>
+                    <p className="text-sm text-slate-600">Recently generated skylines</p>
                 </div>
                 <div className="flex items-center gap-2 text-xs text-slate-600">
                     <Clock className="w-4 h-4" />

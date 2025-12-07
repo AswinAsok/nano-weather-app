@@ -99,7 +99,7 @@ class SupabaseServiceImpl implements SupabaseService {
             }
 
             return data?.favorite_city || null;
-        } catch (err) {
+        } catch {
             return null;
         }
     }
