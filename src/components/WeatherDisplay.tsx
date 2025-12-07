@@ -1,4 +1,4 @@
-import { Droplets, Wind, Eye, Gauge, Clock3, MapPin } from "lucide-react";
+import { Droplets, Wind, Eye, Gauge, Clock3, MapPin, ExternalLink } from "lucide-react";
 import type { WeatherData } from "../types/weather";
 import { deriveLocalTime, resolveWeatherEmoji } from "../utils/weatherPresentation";
 
@@ -15,9 +15,22 @@ export default function WeatherDisplay({ weather }: WeatherDisplayProps) {
                 {/* Header with city and temperature */}
                 <div className="flex items-start justify-between gap-4">
                     <div className="space-y-2">
-                        <div className="pill w-fit text-xs">
-                            <MapPin className="w-3.5 h-3.5" />
-                            {weather.city}, {weather.country}
+                        <div className="flex items-center gap-2">
+                            <div className="pill w-fit text-xs">
+                                <MapPin className="w-3.5 h-3.5" />
+                                {weather.city}, {weather.country}
+                            </div>
+                            <a
+                                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+                                    `${weather.city}, ${weather.country}`
+                                )}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex items-center justify-center w-7 h-7 rounded-full bg-blue-50 border border-blue-200 text-blue-600 hover:bg-blue-100 hover:border-blue-300 transition-colors"
+                                title="Open in Google Maps"
+                            >
+                                <ExternalLink className="w-3.5 h-3.5" />
+                            </a>
                         </div>
                         <h2 className="text-2xl md:text-3xl font-semibold text-slate-900">
                             {weather.city}
