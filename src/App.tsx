@@ -1,6 +1,6 @@
 import { Analytics } from "@vercel/analytics/react";
 import { useCallback, useState } from "react";
-import { Lightbulb, MapPin, Search, Sparkles, Star } from "lucide-react";
+import { Hammer, Lightbulb, MapPin, Search, Sparkles, Star } from "lucide-react";
 import CityVisualization from "./components/CityVisualization";
 import { RecentGallery } from "./components/RecentGallery";
 import WeatherDisplay from "./components/WeatherDisplay";
@@ -77,27 +77,39 @@ function App() {
             <div className="relative min-h-screen overflow-hidden bg-slate-50">
                 <div className="relative max-w-6xl mx-auto px-4 py-6 md:py-12 lg:py-14 space-y-6 md:space-y-10">
                     <div className="glass-panel relative z-20 p-5 md:p-8 lg:p-10 overflow-visible border-slate-200/60">
-                        <div className="flex items-center justify-between mb-4 md:mb-6">
+                        <div className="flex items-center flex-wrap gap-3 md:gap-4 mb-4 md:mb-6">
                             <div className="hidden md:flex items-center gap-2">
                                 <div className="pill w-fit">
                                     <Sparkles className="w-4 h-4" />
                                     Live weather, instant visuals
                                 </div>
                             </div>
-                            <a
-                                href="https://github.com/AswinAsok/nano-weather-app"
-                                className="pill flex items-center gap-2 hover:border-slate-400/80 hover:text-slate-900 transition ml-auto"
-                                target="_blank"
-                                rel="noreferrer"
-                                title="View on GitHub"
-                            >
-                                <Star className="w-4 h-4 text-slate-800" />
-                                {githubStars !== null && !githubStarsError && `${githubStars} stars`}
-                                {githubStars === null &&
-                                    !githubStarsError &&
-                                    "APIs cost snacks—toss a star if this made you smile"}
-                                {githubStarsError && "GitHub unavailable"}
-                            </a>
+                            <div className="flex items-center gap-4 w-full md:w-auto justify-between md:justify-end ml-auto">
+                                <a
+                                    href="https://github.com/AswinAsok/nano-weather-app"
+                                    className="pill flex items-center gap-2 border-amber-400 text-slate-900 transition group"
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    title="View on GitHub"
+                                >
+                                    <Star className="w-4 h-4 text-amber-500 transition group-hover:fill-amber-500 group-hover:text-amber-600" />
+                                    {githubStars !== null && !githubStarsError && `${githubStars} stars`}
+                                    {githubStars === null &&
+                                        !githubStarsError &&
+                                        "APIs cost snacks—toss a star if this made you smile"}
+                                    {githubStarsError && "GitHub unavailable"}
+                                </a>
+                                <a
+                                    href="https://linkedin.com/in/-aswinasok"
+                                    className="pill flex items-center gap-2 hover:border-slate-400/80 hover:text-slate-900 transition group"
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    title="Built by Aswin"
+                                >
+                                    <Hammer className="w-4 h-4 text-slate-700 transition group-hover:text-slate-900" />
+                                    Built by Aswin
+                                </a>
+                            </div>
                         </div>
                         <div className="relative grid grid-cols-1 gap-4 md:gap-8 items-center">
                             <div className="space-y-2 md:space-y-4">
@@ -239,9 +251,9 @@ function App() {
                                     href="https://github.com/AswinAsok/nano-weather-app"
                                     target="_blank"
                                     rel="noreferrer"
-                                    className="inline-flex items-center gap-2 mt-2 rounded-full bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-slate-900/15 transition hover:bg-slate-800"
+                                    className="inline-flex items-center gap-2 mt-2 rounded-full border border-amber-400 bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-slate-900/15 transition hover:bg-slate-800 hover:border-amber-500 group"
                                 >
-                                    <Star className="w-4 h-4" />
+                                    <Star className="w-4 h-4 text-amber-500 transition group-hover:fill-amber-500 group-hover:text-amber-600" />
                                     Star the repo, make a dev smile
                                 </a>
                             </div>
@@ -299,13 +311,13 @@ function App() {
                                 Idea by Hafis CP
                             </a>
                             <a
-                                href="https://github.com/AswinAsok/nano-weather-app"
-                                className="pill hover:border-slate-400/80 hover:text-slate-900 transition"
+                                href="https://linkedin.com/in/-aswinasok"
+                                className="pill border-amber-400 hover:border-amber-500 hover:text-slate-900 transition group"
                                 target="_blank"
                                 rel="noreferrer"
                             >
-                                <Star className="w-4 h-4 text-slate-800" />
-                                View on GitHub
+                                <Star className="w-4 h-4 text-amber-500 transition group-hover:fill-amber-500 group-hover:text-amber-600" />
+                                Built by Aswin
                             </a>
                         </div>
                     </footer>

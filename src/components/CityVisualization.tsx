@@ -128,9 +128,9 @@ export default function CityVisualization({
                                     href="https://github.com/AswinAsok/nano-weather-app"
                                     target="_blank"
                                     rel="noreferrer"
-                                    className="inline-flex items-center gap-2 rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-lg transition hover:bg-slate-800"
+                                    className="inline-flex items-center gap-2 rounded-full border border-amber-400 bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-lg transition hover:bg-slate-800 hover:border-amber-500 group"
                                 >
-                                    <Star className="w-4 h-4" />
+                                    <Star className="w-4 h-4 text-amber-500 transition group-hover:fill-amber-500 group-hover:text-amber-600" />
                                     Star us while you wait!
                                 </a>
                             </div>
@@ -175,13 +175,13 @@ export default function CityVisualization({
                     <div className="flex flex-col md:flex-row items-center justify-center gap-2 md:gap-3 pt-3 md:pt-4">
                         <p className="text-sm text-slate-600">We know you loved it!</p>
                         <a
-                            href="https://github.com/AswinAsok/nano-weather-app"
+                            href="https://linkedin.com/in/-aswinasok"
                             target="_blank"
                             rel="noreferrer"
-                            className="inline-flex items-center gap-2 rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-lg transition hover:bg-slate-800"
+                            className="inline-flex items-center gap-2 rounded-full border border-amber-400 bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-lg transition hover:bg-slate-800 hover:border-amber-500 group"
                         >
-                            <Star className="w-4 h-4" />
-                            Star the repo
+                            <Star className="w-4 h-4 text-amber-500 transition group-hover:fill-amber-500 group-hover:text-amber-600" />
+                            Built by Aswin
                         </a>
                     </div>
                 )}
