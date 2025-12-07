@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Download, Star } from "lucide-react";
 import type { ImageService } from "../services/contracts";
 import { useServices } from "../services/serviceContext";
@@ -21,8 +21,17 @@ export default function CityVisualization({
     const [imageUrl, setImageUrl] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
+    const generatingRef = useRef(false);
+    const lastCityRef = useRef<string | null>(null);
 
-    const generateImage = useCallback(async () => {
+    const generateImage = useCallback(async (forceRetry = false) => {
+        // Prevent duplicate calls from StrictMode or rapid re-renders
+        if (generatingRef.current) return;
+        // Skip if we already generated for this city (unless retrying)
+        if (!forceRetry && lastCityRef.current === weather.city) return;
+
+        generatingRef.current = true;
+        lastCityRef.current = weather.city;
         setLoading(true);
         setError("");
         setImageUrl(null);
@@ -37,6 +46,7 @@ export default function CityVisualization({
             console.error("Image generation error:", err);
         } finally {
             setLoading(false);
+            generatingRef.current = false;
         }
     }, [activeImageService, weather]);
 
@@ -104,7 +114,7 @@ export default function CityVisualization({
                 </div>
                 <button
                   type="button"
-                  onClick={generateImage}
+                  onClick={() => generateImage(true)}
                   disabled={loading}
                   className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-slate-800 border border-slate-200 shadow-sm transition hover:border-slate-400 disabled:opacity-60"
                 >
