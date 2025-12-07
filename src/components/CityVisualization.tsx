@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Download, Star } from "lucide-react";
+import { useSupabaseSync } from "../hooks/useSupabaseSync";
 import type { ImageService } from "../services/contracts";
 import { useServices } from "../services/serviceContext";
 import type { WeatherData } from "../types/weather";
@@ -7,13 +8,26 @@ import type { WeatherData } from "../types/weather";
 interface CityVisualizationProps {
     weather: WeatherData;
     imageService?: ImageService;
+    searchLocation: string | null;
+    onImageGenerated?: (entry: {
+        image_data: string;
+        prompt: string;
+        city: string;
+        country: string;
+        condition: string;
+        temperature: number;
+        searched_at: string;
+        search_location: string;
+    }) => void;
 }
 
 export default function CityVisualization({
     weather,
     imageService,
+    searchLocation,
+    onImageGenerated,
 }: CityVisualizationProps) {
-    const { imageService: defaultImageService } = useServices();
+    const { imageService: defaultImageService, supabaseService } = useServices();
     const activeImageService = useMemo(
         () => imageService ?? defaultImageService,
         [defaultImageService, imageService]
@@ -23,6 +37,10 @@ export default function CityVisualization({
     const [error, setError] = useState("");
     const generatingRef = useRef(false);
     const lastCityRef = useRef<string | null>(null);
+    const [prompt, setPrompt] = useState<string | null>(null);
+
+    // Persist the weather search and generated image to Supabase
+    useSupabaseSync(weather, imageUrl, prompt, searchLocation, supabaseService);
 
     const generateImage = useCallback(async (forceRetry = false) => {
         // Prevent duplicate calls from StrictMode or rapid re-renders
@@ -35,10 +53,24 @@ export default function CityVisualization({
         setLoading(true);
         setError("");
         setImageUrl(null);
+        setPrompt(null);
 
         try {
-            const url = await activeImageService.generateCityImage(weather);
+            const { imageUrl: url, prompt: generatedPrompt } =
+                await activeImageService.generateCityImage(weather);
             setImageUrl(url);
+            setPrompt(generatedPrompt);
+
+            onImageGenerated?.({
+                image_data: url,
+                prompt: generatedPrompt,
+                city: weather.city,
+                country: weather.country,
+                condition: weather.description,
+                temperature: weather.temperature,
+                searched_at: new Date().toISOString(),
+                search_location: searchLocation ?? `${weather.city}, ${weather.country}`,
+            });
         } catch (err) {
             const message =
                 err instanceof Error ? err.message : "Failed to generate city visualization";

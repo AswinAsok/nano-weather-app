@@ -2,15 +2,19 @@ import { Analytics } from "@vercel/analytics/react";
 import { useCallback, useState } from "react";
 import { Lightbulb, MapPin, Search, Sparkles, Star } from "lucide-react";
 import CityVisualization from "./components/CityVisualization";
+import { RecentGallery } from "./components/RecentGallery";
 import WeatherDisplay from "./components/WeatherDisplay";
 import { useCitySuggestions } from "./hooks/useCitySuggestions";
 import { useGithubStars } from "./hooks/useGithubStars";
 import { useWeatherController } from "./hooks/useWeatherController";
 import { useServices } from "./services/serviceContext";
+import type { WeatherSearchHistory } from "./services/supabaseService";
 
 function App() {
     const { weatherService, githubRepoService, geolocationService, imageService } = useServices();
     const [city, setCity] = useState("");
+    const [searchLocation, setSearchLocation] = useState<string | null>(null);
+    const [latestLocalEntry, setLatestLocalEntry] = useState<WeatherSearchHistory | null>(null);
     const [locating, setLocating] = useState(false);
     const [showSuggestions, setShowSuggestions] = useState(false);
 
@@ -35,7 +39,10 @@ function App() {
             if (!trimmed) return;
 
             clearError();
-            await searchByCity(trimmed);
+            const data = await searchByCity(trimmed);
+            if (data) {
+                setSearchLocation(`${data.city}, ${data.country}`);
+            }
         },
         [city, clearError, searchByCity]
     );
@@ -48,7 +55,11 @@ function App() {
         try {
             const coords = await geolocationService.getCurrentPosition({ timeout: 10000 });
             const data = await searchByCoords(coords.latitude, coords.longitude);
-            if (data) setCity(data.city);
+            if (data) {
+                setCity(data.city);
+                const formattedCoords = `${coords.latitude.toFixed(3)}, ${coords.longitude.toFixed(3)}`;
+                setSearchLocation(`GPS ${formattedCoords} (${data.city}, ${data.country})`);
+            }
         } catch (err) {
             const message =
                 err instanceof Error
@@ -238,7 +249,12 @@ function App() {
                     ) : weatherData ? (
                         <div className="space-y-6 md:space-y-10">
                             <WeatherDisplay weather={weatherData} />
-                            <CityVisualization weather={weatherData} imageService={imageService} />
+                            <CityVisualization
+                                weather={weatherData}
+                                imageService={imageService}
+                                searchLocation={searchLocation}
+                                onImageGenerated={(entry) => setLatestLocalEntry(entry)}
+                            />
                         </div>
                     ) : (
                         <div className="glass-panel border-slate-200/80 px-8 py-12 text-center space-y-6">
@@ -256,6 +272,12 @@ function App() {
                             </div>
                         </div>
                     )}
+
+                    <RecentGallery
+                        limit={15}
+                        currentEntry={latestLocalEntry}
+                        loadRemote={!latestLocalEntry}
+                    />
 
                     <footer className="glass-card border-slate-200/80 px-6 py-5 md:px-8 md:py-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                         <div className="space-y-1">

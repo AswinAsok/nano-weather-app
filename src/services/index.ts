@@ -2,6 +2,7 @@ import { browserGeolocationService } from "./geolocationService";
 import { githubRepoService } from "./githubService";
 import { serverImageService } from "./imageService";
 import { openWeatherService } from "./weatherService";
+import { supabaseService } from "./supabaseService";
 import type { ServiceContainer } from "./contracts";
 
 export const defaultServices: ServiceContainer = {
@@ -9,4 +10,5 @@ export const defaultServices: ServiceContainer = {
     githubRepoService,
     imageService: serverImageService,
     geolocationService: browserGeolocationService,
+    supabaseService,
 };

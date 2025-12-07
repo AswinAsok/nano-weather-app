@@ -1,5 +1,5 @@
 import type { WeatherData } from "../types/weather";
-import type { ImageService } from "./contracts";
+import type { GeneratedImage, ImageService } from "./contracts";
 
 type TimeOfDay = "sunrise" | "morning" | "midday" | "sunset" | "night" | "day";
 
@@ -122,7 +122,7 @@ Square 1080x1080 composition.`;
 class ServerImageService implements ImageService {
     constructor(private readonly endpoint: string, private readonly promptBuilder: PromptBuilder) {}
 
-    async generateCityImage(weather: WeatherData): Promise<string> {
+    async generateCityImage(weather: WeatherData): Promise<GeneratedImage> {
         const prompt = this.promptBuilder.build(weather);
 
         const res = await fetch(this.endpoint, {
@@ -140,7 +140,10 @@ class ServerImageService implements ImageService {
         if (data.error) throw new Error(data.error);
         if (!data.dataUrl) throw new Error("No image returned from server");
 
-        return data.dataUrl;
+        return {
+            imageUrl: data.dataUrl,
+            prompt,
+        };
     }
 }
 
