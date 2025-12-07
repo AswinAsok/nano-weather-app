@@ -2,6 +2,7 @@ import { Analytics } from "@vercel/analytics/react";
 import { useCallback, useState } from "react";
 import { Hammer, Lightbulb, MapPin, Search, Sparkles, Star } from "lucide-react";
 import CityVisualization from "./components/CityVisualization";
+import { MapBackground } from "./components/MapBackground";
 import { RecentGallery } from "./components/RecentGallery";
 import WeatherDisplay from "./components/WeatherDisplay";
 import { useCitySuggestions } from "./hooks/useCitySuggestions";
@@ -74,7 +75,8 @@ function App() {
     return (
         <>
             <Analytics />
-            <div className="relative min-h-screen overflow-hidden bg-slate-50">
+            <MapBackground />
+            <div className="relative min-h-screen overflow-hidden bg-transparent">
                 <div className="relative max-w-6xl mx-auto px-4 py-6 md:py-12 lg:py-14 space-y-6 md:space-y-10">
                     <div className="glass-panel relative z-20 p-5 md:p-8 lg:p-10 overflow-visible border-slate-200/60">
                         <div className="flex items-center flex-wrap gap-3 md:gap-4 mb-4 md:mb-6">
