@@ -96,8 +96,21 @@ export function RecentGallery({
                     {Array.from({ length: 6 }).map((_, idx) => (
                         <div
                             key={idx}
-                            className="rounded-2xl border border-slate-200 bg-white/70 shadow-sm h-48 animate-pulse"
-                        />
+                            className="rounded-2xl border border-slate-200 bg-white/80 shadow-sm overflow-hidden"
+                        >
+                            <div className="h-72 bg-slate-100 animate-pulse" />
+                            <div className="p-4 space-y-3">
+                                <div className="h-4 w-24 bg-slate-100 rounded animate-pulse" />
+                                <div className="h-5 w-3/4 bg-slate-100 rounded animate-pulse" />
+                                <div className="flex items-center gap-2">
+                                    <div className="h-4 w-4 bg-slate-100 rounded-full animate-pulse" />
+                                    <div className="h-4 w-1/2 bg-slate-100 rounded animate-pulse" />
+                                </div>
+                            </div>
+                            <div className="px-4 pb-4">
+                                <div className="h-3 w-28 bg-slate-100 rounded animate-pulse" />
+                            </div>
+                        </div>
                     ))}
                 </div>
             )}
@@ -123,7 +136,7 @@ export function RecentGallery({
                                 key={item.id || `${item.city}-${item.searched_at}`}
                                 className="rounded-2xl border border-slate-200 bg-white/80 shadow-sm overflow-hidden flex flex-col"
                             >
-                                <div className="relative aspect-video bg-slate-100">
+                                <div className="relative h-72 bg-slate-100">
                                     {item.image_data ? (
                                         <img
                                             src={item.image_data}
