@@ -23,7 +23,7 @@ export function LiveActivityFeed() {
     const [activities, setActivities] = useState<ActivityItem[]>([]);
     const [loading, setLoading] = useState(true);
     const [liveCount, setLiveCount] = useState(Math.floor(Math.random() * 8) + 12);
-    const [totalCount, setTotalCount] = useState(750);
+    const [totalCount, setTotalCount] = useState<number | null>(null);
 
     useEffect(() => {
         async function fetchRealData() {
@@ -69,7 +69,7 @@ export function LiveActivityFeed() {
                     (payload) => {
                         const newItem = payload.new as ActivityItem;
                         setActivities((prev) => [newItem, ...prev.slice(0, 9)]);
-                        setTotalCount((prev) => prev + 1);
+                        setTotalCount((prev) => (prev !== null ? prev + 1 : prev));
                     }
                 )
                 .subscribe();
@@ -121,7 +121,7 @@ export function LiveActivityFeed() {
                     <div className="flex items-center gap-2 rounded-full bg-amber-100 px-3 py-1.5">
                         <TrendingUp className="w-3 h-3 text-amber-600" />
                         <span className="text-xs font-medium text-amber-700">
-                            {totalCount.toLocaleString()} total
+                            {totalCount !== null ? `${totalCount.toLocaleString()} total` : "loading..."}
                         </span>
                     </div>
                 </div>
