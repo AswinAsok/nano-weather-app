@@ -39,16 +39,14 @@ export function LiveActivityFeed() {
                         .select("id, city, country, temperature, condition, searched_at")
                         .order("searched_at", { ascending: false })
                         .limit(10),
-                    supabase
-                        .from("weather_searches")
-                        .select("*", { count: "exact", head: true }),
+                    supabase.from("weather_searches").select("*", { count: "exact", head: true }),
                 ]);
 
                 if (data && data.length > 0) {
                     setActivities(data);
                 }
                 if (count !== null) {
-                    setTotalCount(750 + count);
+                    setTotalCount(250 + count);
                 }
             } catch {
                 // Failed to fetch
@@ -100,7 +98,7 @@ export function LiveActivityFeed() {
     return (
         <div className="glass-panel border-slate-200/80 p-5 md:p-6 space-y-5">
             {/* Header */}
-            <div className="flex items-center justify-between gap-3">
+            <div className="flex flex-wrap items-center justify-between gap-3">
                 <div className="flex items-center gap-3">
                     <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-500 to-purple-600 text-white">
                         <Globe className="w-5 h-5" />
@@ -110,18 +108,20 @@ export function LiveActivityFeed() {
                         <p className="text-xs text-slate-500">See what others are searching</p>
                     </div>
                 </div>
-                <div className="flex items-center gap-3">
-                    <div className="flex items-center gap-2 rounded-full bg-green-100 px-3 py-1.5">
+                <div className="flex items-center gap-2 flex-shrink-0">
+                    <div className="flex items-center gap-1.5 rounded-full bg-green-100 px-2.5 py-1.5">
                         <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
-                        <span className="text-xs font-medium text-green-700">
-                            <Users className="w-3 h-3 inline mr-1" />
+                        <span className="text-xs font-medium text-green-700 whitespace-nowrap">
+                            <Users className="w-3 h-3 inline mr-0.5" />
                             {liveCount} online
                         </span>
                     </div>
-                    <div className="flex items-center gap-2 rounded-full bg-amber-100 px-3 py-1.5">
+                    <div className="flex items-center gap-1.5 rounded-full bg-amber-100 px-2.5 py-1.5">
                         <TrendingUp className="w-3 h-3 text-amber-600" />
-                        <span className="text-xs font-medium text-amber-700">
-                            {totalCount !== null ? `${totalCount.toLocaleString()} total` : "loading..."}
+                        <span className="text-xs font-medium text-amber-700 whitespace-nowrap">
+                            {totalCount !== null
+                                ? `${totalCount.toLocaleString()} total`
+                                : "loading..."}
                         </span>
                     </div>
                 </div>

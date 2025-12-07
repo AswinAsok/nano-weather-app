@@ -98,7 +98,9 @@ function App() {
             const data = await searchByCoords(coords.latitude, coords.longitude);
             if (data) {
                 setCity(data.city);
-                const formattedCoords = `${coords.latitude.toFixed(3)}, ${coords.longitude.toFixed(3)}`;
+                const formattedCoords = `${coords.latitude.toFixed(3)}, ${coords.longitude.toFixed(
+                    3
+                )}`;
                 setSearchLocation(`GPS ${formattedCoords} (${data.city}, ${data.country})`);
                 recordSearch();
                 // Generate roast in parallel
@@ -113,7 +115,15 @@ function App() {
         } finally {
             setLocating(false);
         }
-    }, [clearError, clearRoast, geolocationService, searchByCoords, setCustomError, recordSearch, generateRoast]);
+    }, [
+        clearError,
+        clearRoast,
+        geolocationService,
+        searchByCoords,
+        setCustomError,
+        recordSearch,
+        generateRoast,
+    ]);
 
     const handleQuickCity = useCallback(
         async (cityName: string) => {
@@ -143,7 +153,9 @@ function App() {
                             <div className="hidden md:flex items-center gap-2">
                                 <div className="pill w-fit bg-gradient-to-r from-violet-100 to-purple-100 border-violet-300">
                                     <Zap className="w-4 h-4 text-violet-600" />
-                                    <span className="text-violet-700 font-medium">AI-Powered Roasts</span>
+                                    <span className="text-violet-700 font-medium">
+                                        AI-Powered Roasts
+                                    </span>
                                 </div>
                             </div>
                             <div className="flex items-center gap-3 w-full md:w-auto justify-between md:justify-end ml-auto">
@@ -187,7 +199,9 @@ function App() {
                                 </h1>
                                 <p className="text-base md:text-lg text-slate-600 max-w-xl">
                                     Search any city for live weather, AI-generated visuals, and a{" "}
-                                    <span className="font-semibold text-slate-900">savage roast</span>{" "}
+                                    <span className="font-semibold text-slate-900">
+                                        savage roast
+                                    </span>{" "}
                                     you'll want to share everywhere.
                                 </p>
                             </div>
@@ -216,7 +230,10 @@ function App() {
                                                     value={city}
                                                     onFocus={() => setShowSuggestions(true)}
                                                     onBlur={() =>
-                                                        setTimeout(() => setShowSuggestions(false), 120)
+                                                        setTimeout(
+                                                            () => setShowSuggestions(false),
+                                                            120
+                                                        )
                                                     }
                                                     onChange={(e) => setCity(e.target.value)}
                                                     placeholder="Enter a city to roast..."
@@ -246,7 +263,7 @@ function App() {
                                                 ) : (
                                                     <MapPin className="w-4 h-4" />
                                                 )}
-                                                {locating ? "Finding you..." : "Roast Me"}
+                                                {locating ? "Finding you..." : "Roast Current City"}
                                             </button>
                                         </div>
 
@@ -336,8 +353,12 @@ function App() {
                                             <Flame className="w-5 h-5" />
                                         </div>
                                         <div>
-                                            <h3 className="font-semibold text-slate-900">The Roast</h3>
-                                            <p className="text-xs text-slate-500">AI-generated shade</p>
+                                            <h3 className="font-semibold text-slate-900">
+                                                The Roast
+                                            </h3>
+                                            <p className="text-xs text-slate-500">
+                                                AI-generated shade
+                                            </p>
                                         </div>
                                     </div>
 
