@@ -216,10 +216,9 @@ export function RecentGallery({
                                       No image stored for this entry
                                   </div>
                               )}
+                          </div>
 
-                        </div>
-
-                        <div className="p-5 md:p-6 bg-white text-slate-900">
+                          <div className="p-5 md:p-6 bg-white text-slate-900">
                               <div className="flex items-start justify-between gap-3 flex-wrap">
                                   <div>
                                       <p className="text-sm text-slate-500">City</p>
@@ -234,13 +233,14 @@ export function RecentGallery({
                               <div className="flex items-center gap-2 text-sm text-slate-700 mt-3">
                                   <MapPin className="w-4 h-4" />
                                   <span className="truncate">
-                                      {activeItem.search_location || `${activeItem.city}, ${activeItem.country}`}
+                                      {activeItem.search_location ||
+                                          `${activeItem.city}, ${activeItem.country}`}
                                   </span>
                               </div>
                               <p className="text-xs text-slate-500 mt-2">
                                   Generated {formatTimestamp(activeItem.searched_at)}
                               </p>
-                        </div>
+                          </div>
                       </div>
                   </div>,
                   document.body
@@ -250,115 +250,116 @@ export function RecentGallery({
     return (
         <>
             <div className="glass-panel border-slate-200/80 p-5 md:p-8 space-y-4 md:space-y-6">
-            <div className="flex items-center justify-between gap-3 flex-wrap">
-                <div className="flex items-center gap-3">
-                    <div className="pill text-xs">
-                        <Sparkles className="w-4 h-4" />
-                        Live gallery
-                    </div>
-                    <p className="text-sm text-slate-600">Recently generated skylines</p>
-                </div>
-                <div className="flex items-center gap-2 text-xs text-slate-600">
-                    <Clock className="w-4 h-4" />
-                    Updates as soon as new renders land.
-                </div>
-            </div>
-
-            {loading && (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5">
-                    {Array.from({ length: 6 }).map((_, idx) => (
-                        <div
-                            key={idx}
-                            className="rounded-2xl border border-slate-200 bg-white/80 shadow-sm overflow-hidden"
-                        >
-                            <div className="h-72 bg-slate-100 animate-pulse" />
-                            <div className="p-4 space-y-3">
-                                <div className="h-4 w-24 bg-slate-100 rounded animate-pulse" />
-                                <div className="h-5 w-3/4 bg-slate-100 rounded animate-pulse" />
-                                <div className="flex items-center gap-2">
-                                    <div className="h-4 w-4 bg-slate-100 rounded-full animate-pulse" />
-                                    <div className="h-4 w-1/2 bg-slate-100 rounded animate-pulse" />
-                                </div>
-                            </div>
-                            <div className="px-4 pb-4">
-                                <div className="h-3 w-28 bg-slate-100 rounded animate-pulse" />
-                            </div>
+                <div className="flex items-center justify-between gap-3 flex-wrap">
+                    <div className="flex items-center gap-3">
+                        <div className="pill text-xs">
+                            <Sparkles className="w-4 h-4" />
+                            Live gallery
                         </div>
-                    ))}
+                        <p className="text-sm text-slate-600">Recently generated skylines</p>
+                    </div>
+                    <div className="flex items-center gap-2 text-xs text-slate-600">
+                        <Clock className="w-4 h-4" />
+                        Updates as soon as new renders land.
+                    </div>
                 </div>
-            )}
 
-            {!loading && error && (
-                <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-xl px-3 py-2">
-                    {error}
-                </p>
-            )}
-
-            {!loading && !hasContent && !error && (
-                <div className="text-sm text-slate-600 bg-slate-100 border border-slate-200 rounded-xl px-4 py-3">
-                    No generated images yet. Your next search will light up this gallery.
-                </div>
-            )}
-
-            {!loading && hasContent && (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5">
-                    {mergedItems.map((item, index) => {
-                        const fallbackLocation = item.search_location || `${item.city}, ${item.country}`;
-                        return (
+                {loading && (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5">
+                        {Array.from({ length: 6 }).map((_, idx) => (
                             <div
-                                key={item.id || `${item.city}-${item.searched_at}`}
-                                className="rounded-2xl border border-slate-200 bg-white/80 shadow-sm overflow-hidden flex flex-col cursor-pointer transition hover:-translate-y-0.5 hover:shadow-md"
-                                onClick={() => openViewer(index)}
-                                role="button"
-                                tabIndex={0}
-                                onKeyDown={(e) => {
-                                    if (e.key === "Enter" || e.key === " ") {
-                                        e.preventDefault();
-                                        openViewer(index);
-                                    }
-                                }}
+                                key={idx}
+                                className="rounded-2xl border border-slate-200 bg-white/80 shadow-sm overflow-hidden"
                             >
-                                <div className="relative h-72 bg-slate-100">
-                                    {item.image_data ? (
-                                        <img
-                                            src={item.image_data}
-                                            alt={`Recent render of ${item.city}`}
-                                            className="w-full h-full object-cover"
-                                        />
-                                    ) : (
-                                        <div className="absolute inset-0 grid place-items-center text-slate-400 text-xs">
-                                            No image stored
-                                        </div>
-                                    )}
-                                </div>
-                                <div className="p-4 space-y-2 flex-1">
-                                    <div className="flex items-start justify-between gap-2">
-                                        <div>
-                                            <p className="text-sm text-slate-500">City</p>
-                                            <p className="text-base font-semibold text-slate-900">
-                                                {item.city}, {item.country}
-                                            </p>
-                                        </div>
-                                        <span className="rounded-full border border-slate-200 bg-slate-50 px-2 py-1 text-[11px] font-medium text-slate-700">
-                                            {item.condition}
-                                        </span>
-                                    </div>
-                                    <div className="flex items-center gap-2 text-xs text-slate-600">
-                                        <MapPin className="w-4 h-4" />
-                                        <span className="truncate">{fallbackLocation}</span>
+                                <div className="h-72 bg-slate-100 animate-pulse" />
+                                <div className="p-4 space-y-3">
+                                    <div className="h-4 w-24 bg-slate-100 rounded animate-pulse" />
+                                    <div className="h-5 w-3/4 bg-slate-100 rounded animate-pulse" />
+                                    <div className="flex items-center gap-2">
+                                        <div className="h-4 w-4 bg-slate-100 rounded-full animate-pulse" />
+                                        <div className="h-4 w-1/2 bg-slate-100 rounded animate-pulse" />
                                     </div>
                                 </div>
-                                <div className="px-4 pb-3 text-[11px] text-slate-500">
-                                    Generated {formatTimestamp(item.searched_at)}
+                                <div className="px-4 pb-4">
+                                    <div className="h-3 w-28 bg-slate-100 rounded animate-pulse" />
                                 </div>
                             </div>
-                        );
-                    })}
-                </div>
-            )}
+                        ))}
+                    </div>
+                )}
 
-            {viewerOverlay}
-        </div>
+                {!loading && error && (
+                    <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-xl px-3 py-2">
+                        {error}
+                    </p>
+                )}
+
+                {!loading && !hasContent && !error && (
+                    <div className="text-sm text-slate-600 bg-slate-100 border border-slate-200 rounded-xl px-4 py-3">
+                        No generated images yet. Your next search will light up this gallery.
+                    </div>
+                )}
+
+                {!loading && hasContent && (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5">
+                        {mergedItems.map((item, index) => {
+                            const fallbackLocation =
+                                item.search_location || `${item.city}, ${item.country}`;
+                            return (
+                                <div
+                                    key={item.id || `${item.city}-${item.searched_at}`}
+                                    className="rounded-2xl border border-slate-200 bg-white/80 shadow-sm overflow-hidden flex flex-col cursor-pointer transition hover:-translate-y-0.5 hover:shadow-md"
+                                    onClick={() => openViewer(index)}
+                                    role="button"
+                                    tabIndex={0}
+                                    onKeyDown={(e) => {
+                                        if (e.key === "Enter" || e.key === " ") {
+                                            e.preventDefault();
+                                            openViewer(index);
+                                        }
+                                    }}
+                                >
+                                    <div className="relative h-72 bg-slate-100">
+                                        {item.image_data ? (
+                                            <img
+                                                src={item.image_data}
+                                                alt={`Recent render of ${item.city}`}
+                                                className="w-full h-full object-cover object-top"
+                                            />
+                                        ) : (
+                                            <div className="absolute inset-0 grid place-items-center text-slate-400 text-xs">
+                                                No image stored
+                                            </div>
+                                        )}
+                                    </div>
+                                    <div className="p-4 space-y-2 flex-1">
+                                        <div className="flex items-start justify-between gap-2">
+                                            <div>
+                                                <p className="text-sm text-slate-500">City</p>
+                                                <p className="text-base font-semibold text-slate-900">
+                                                    {item.city}, {item.country}
+                                                </p>
+                                            </div>
+                                            <span className="rounded-full border border-slate-200 bg-slate-50 px-2 py-1 text-[11px] font-medium text-slate-700">
+                                                {item.condition}
+                                            </span>
+                                        </div>
+                                        <div className="flex items-center gap-2 text-xs text-slate-600">
+                                            <MapPin className="w-4 h-4" />
+                                            <span className="truncate">{fallbackLocation}</span>
+                                        </div>
+                                    </div>
+                                    <div className="px-4 pb-3 text-[11px] text-slate-500">
+                                        Generated {formatTimestamp(item.searched_at)}
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+                )}
+
+                {viewerOverlay}
+            </div>
         </>
     );
 }

@@ -23,7 +23,7 @@ export function LiveActivityFeed() {
     const [activities, setActivities] = useState<ActivityItem[]>([]);
     const [loading, setLoading] = useState(true);
     const [liveCount, setLiveCount] = useState(Math.floor(Math.random() * 8) + 12);
-    const [totalCount, setTotalCount] = useState(Math.floor(Math.random() * 50) + 725);
+    const [totalCount, setTotalCount] = useState(750);
 
     useEffect(() => {
         async function fetchRealData() {
@@ -33,14 +33,22 @@ export function LiveActivityFeed() {
             }
 
             try {
-                const { data } = await supabase
-                    .from("weather_searches")
-                    .select("id, city, country, temperature, condition, searched_at")
-                    .order("searched_at", { ascending: false })
-                    .limit(10);
+                const [{ data }, { count }] = await Promise.all([
+                    supabase
+                        .from("weather_searches")
+                        .select("id, city, country, temperature, condition, searched_at")
+                        .order("searched_at", { ascending: false })
+                        .limit(10),
+                    supabase
+                        .from("weather_searches")
+                        .select("*", { count: "exact", head: true }),
+                ]);
 
                 if (data && data.length > 0) {
                     setActivities(data);
+                }
+                if (count !== null) {
+                    setTotalCount(750 + count);
                 }
             } catch {
                 // Failed to fetch
@@ -123,7 +131,10 @@ export function LiveActivityFeed() {
             {loading ? (
                 <div className="space-y-2">
                     {Array.from({ length: 3 }).map((_, i) => (
-                        <div key={i} className="flex items-center justify-between rounded-xl px-4 py-3 bg-slate-50">
+                        <div
+                            key={i}
+                            className="flex items-center justify-between rounded-xl px-4 py-3 bg-slate-50"
+                        >
                             <div className="flex items-center gap-3">
                                 <div className="h-4 w-20 bg-slate-200 rounded animate-pulse" />
                                 <div className="h-4 w-8 bg-slate-200 rounded animate-pulse" />
