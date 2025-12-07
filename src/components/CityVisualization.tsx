@@ -1,7 +1,7 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Download, Star } from "lucide-react";
 import type { ImageService } from "../services/contracts";
-import { defaultServices } from "../services";
+import { useServices } from "../services/serviceContext";
 import type { WeatherData } from "../types/weather";
 
 interface CityVisualizationProps {
@@ -11,8 +11,13 @@ interface CityVisualizationProps {
 
 export default function CityVisualization({
     weather,
-    imageService = defaultServices.imageService,
+    imageService,
 }: CityVisualizationProps) {
+    const { imageService: defaultImageService } = useServices();
+    const activeImageService = useMemo(
+        () => imageService ?? defaultImageService,
+        [defaultImageService, imageService]
+    );
     const [imageUrl, setImageUrl] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
@@ -23,7 +28,7 @@ export default function CityVisualization({
         setImageUrl(null);
 
         try {
-            const url = await imageService.generateCityImage(weather);
+            const url = await activeImageService.generateCityImage(weather);
             setImageUrl(url);
         } catch (err) {
             const message =
@@ -33,7 +38,7 @@ export default function CityVisualization({
         } finally {
             setLoading(false);
         }
-    }, [imageService, weather]);
+    }, [activeImageService, weather]);
 
     const handleDownload = () => {
         if (!imageUrl) return;

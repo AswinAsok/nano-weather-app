@@ -30,3 +30,10 @@ export interface GithubRepoService {
 export interface GeolocationService {
     getCurrentPosition(options?: PositionOptions): Promise<Coordinates>;
 }
+
+export interface ServiceContainer {
+    weatherService: WeatherService;
+    githubRepoService: GithubRepoService;
+    imageService: ImageService;
+    geolocationService: GeolocationService;
+}

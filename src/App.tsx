@@ -6,11 +6,10 @@ import WeatherDisplay from "./components/WeatherDisplay";
 import { useCitySuggestions } from "./hooks/useCitySuggestions";
 import { useGithubStars } from "./hooks/useGithubStars";
 import { useWeatherController } from "./hooks/useWeatherController";
-import { defaultServices } from "./services";
-
-const { weatherService, githubRepoService, geolocationService, imageService } = defaultServices;
+import { useServices } from "./services/serviceContext";
 
 function App() {
+    const { weatherService, githubRepoService, geolocationService, imageService } = useServices();
     const [city, setCity] = useState("");
     const [locating, setLocating] = useState(false);
     const [showSuggestions, setShowSuggestions] = useState(false);
@@ -130,6 +129,18 @@ function App() {
                                                 />
                                             </div>
                                             <button
+                                                type="submit"
+                                                disabled={loading}
+                                                className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-3xl bg-slate-900 px-6 py-4 md:py-5 text-sm font-semibold text-white shadow-lg shadow-slate-900/15 transition hover:bg-slate-800 disabled:opacity-60 w-full md:w-auto"
+                                            >
+                                                {loading ? (
+                                                    <div className="animate-spin rounded-full h-4 w-4 border-2 border-white/80 border-t-transparent" />
+                                                ) : (
+                                                    <Search className="w-4 h-4" />
+                                                )}
+                                                {loading ? "Searching" : "Fetch weather"}
+                                            </button>
+                                            <button
                                                 type="button"
                                                 onClick={handleUseCurrentLocation}
                                                 disabled={loading || locating}
@@ -141,18 +152,6 @@ function App() {
                                                     <MapPin className="w-4 h-4" />
                                                 )}
                                                 {locating ? "Getting location" : "Use my location"}
-                                            </button>
-                                            <button
-                                                type="submit"
-                                                disabled={loading}
-                                                className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-3xl bg-slate-900 px-6 py-4 md:py-5 text-sm font-semibold text-white shadow-lg shadow-slate-900/15 transition hover:bg-slate-800 disabled:opacity-60 w-full md:w-auto"
-                                            >
-                                                {loading ? (
-                                                    <div className="animate-spin rounded-full h-4 w-4 border-2 border-white/80 border-t-transparent" />
-                                                ) : (
-                                                    <Search className="w-4 h-4" />
-                                                )}
-                                                {loading ? "Searching" : "Fetch weather"}
                                             </button>
                                         </div>
 
